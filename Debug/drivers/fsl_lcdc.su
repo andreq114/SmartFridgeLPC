@@ -1,0 +1,17 @@
+fsl_clock.h:698:20:CLOCK_EnableClock	24	static
+fsl_lcdc.c:85:17:LCDC_GetInstance	24	static
+fsl_lcdc.c:103:13:LCDC_GetClockDivider	32	static
+fsl_lcdc.c:187:10:LCDC_Init	40	static
+fsl_lcdc.c:264:6:LCDC_Deinit	16	static
+fsl_lcdc.c:300:6:LCDC_GetDefaultConfig	16	static
+fsl_lcdc.c:333:6:LCDC_SetPanelAddr	24	static
+fsl_lcdc.c:356:6:LCDC_SetPalette	32	static
+fsl_lcdc.c:381:6:LCDC_EnableInterrupts	24	static
+fsl_lcdc.c:411:6:LCDC_DisableInterrupts	24	static
+fsl_lcdc.c:452:10:LCDC_GetInterruptsPendingStatus	24	static
+fsl_lcdc.c:472:10:LCDC_GetEnabledInterruptsPendingStatus	24	static
+fsl_lcdc.c:495:6:LCDC_ClearInterruptsStatus	24	static
+fsl_lcdc.c:549:6:LCDC_SetCursorConfig	24	static
+fsl_lcdc.c:608:6:LCDC_CursorGetDefaultConfig	24	static
+fsl_lcdc.c:641:6:LCDC_SetCursorPosition	32	static
+fsl_lcdc.c:695:6:LCDC_SetCursorImage	40	static

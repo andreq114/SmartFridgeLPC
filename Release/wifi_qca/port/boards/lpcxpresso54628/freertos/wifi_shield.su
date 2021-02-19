@@ -1,0 +1,6 @@
+wifi_shield.c:25:10:WIFISHIELD_Init	16	static
+wifi_shield.c:73:10:WIFISHIELD_InitDrivers	88	static
+wifi_shield.c:124:10:WIFISHIELD_DeinitDrivers	0	static
+wifi_shield.c:133:10:WIFISHIELD_PowerUp	0	static
+wifi_shield.c:149:6:WIFISHIELD_NotifyDriverTask	8	static
+wifi_shield.c:163:13:PINT_callback	0	static

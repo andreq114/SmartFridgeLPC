@@ -1,0 +1,12 @@
+fsl_clock.h:698:20:CLOCK_EnableClock	24	static
+fsl_clock.h:712:20:CLOCK_DisableClock	24	static
+fsl_spifi.h:233:20:SPIFI_ResetCommand	16	static
+fsl_spifi.h:292:24:SPIFI_GetStatusFlag	16	static
+fsl_spifi.c:49:10:SPIFI_GetInstance	24	static
+fsl_spifi.c:72:6:SPIFI_GetDefaultConfig	16	static
+fsl_spifi.c:97:6:SPIFI_Init	16	static
+fsl_spifi.c:125:6:SPIFI_Deinit	16	static
+fsl_spifi.c:139:6:SPIFI_SetCommand	16	static
+fsl_spifi.c:166:6:SPIFI_SetMemoryCommand	16	static
+fsl_spifi.c:190:6:SPIFI_WriteDataHalfword	24	static
+fsl_spifi.c:205:10:SPIFI_ReadDataHalfword	32	static

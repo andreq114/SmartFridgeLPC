@@ -1,0 +1,5 @@
+fsl_ft5406.c:34:10:FT5406_Init	32	static
+fsl_ft5406.c:78:10:FT5406_Denit	0	static
+fsl_ft5406.c:91:10:FT5406_ReadTouchData	0	static
+fsl_ft5406.c:103:10:FT5406_GetSingleTouch	32	static
+fsl_ft5406.c:137:10:FT5406_GetMultiTouch	24	static

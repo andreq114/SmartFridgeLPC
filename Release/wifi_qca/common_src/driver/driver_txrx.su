@@ -1,0 +1,8 @@
+driver_txrx.c:96:13:Driver_PostProcessRequest	0	static
+driver_txrx.c:183:13:Driver_Ep0TxComplete	0	static
+driver_txrx.c:71:13:Driver_TxComplete	16	static
+driver_txrx.c:44:6:Driver_RxComplete	24	static
+driver_txrx.c:122:1:Driver_SubmitTxRequest	24	static
+driver_txrx.c:189:1:Driver_SubmitEp0TxRequest	24	static
+driver_txrx.c:252:10:Driver_SendPacket	24	static
+driver_txrx.c:292:10:Driver_RecvPacket	16	static

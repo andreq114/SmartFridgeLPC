@@ -1,0 +1,2 @@
+intro.c:17:13:intro_anim	0	static
+intro.c:26:6:INTRO_StartIntro	32	static

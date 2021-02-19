@@ -1,0 +1,3 @@
+fsl_inputmux.c:33:6:INPUTMUX_Init	0	static
+fsl_inputmux.c:56:6:INPUTMUX_AttachSignal	0	static
+fsl_inputmux.c:125:6:INPUTMUX_Deinit	0	static

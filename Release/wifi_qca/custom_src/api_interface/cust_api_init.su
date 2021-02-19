@@ -1,0 +1,8 @@
+cust_api_init.c:66:17:Custom_Api_Readmii	0	static
+cust_api_init.c:78:17:Custom_Api_Writemii	0	static
+cust_api_init.c:90:17:Custom_Api_Join	0	static
+cust_api_init.c:100:17:Custom_Api_Rejoin	0	static
+cust_api_init.c:267:17:Custom_Api_Shutdown	8	static
+cust_api_init.c:140:17:Custom_Api_Initialize	24	static
+cust_api_init.c:109:10:chip_state_ctrl	8	static
+cust_api_init.c:301:7:Custom_Api_GetDriverCxt	0	static

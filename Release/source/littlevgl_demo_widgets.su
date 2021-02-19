@@ -1,0 +1,15 @@
+littlevgl_demo_widgets.c:255:13:menuGetHttpGateway	0	static
+littlevgl_demo_widgets.c:249:13:menuGetHttp	0	static
+littlevgl_demo_widgets.c:206:13:menuPingSomeHost	0	static
+littlevgl_demo_widgets.c:211:13:menuPingGateway	8	static
+littlevgl_demo_widgets.c:201:13:menuDisconnect	0	static
+littlevgl_demo_widgets.c:195:13:menuConnectToAP	8	static
+littlevgl_demo_widgets.c:325:6:task_main	8	static
+littlevgl_demo_widgets.c:360:13:AppTask	8	static
+littlevgl_demo_widgets.c:388:13:RFID_Task	16	static
+littlevgl_demo_widgets.c:83:6:connectWiFi	8	static
+littlevgl_demo_widgets.c:95:6:translateList	36	static
+littlevgl_demo_widgets.c:418:5:main	16	static
+littlevgl_demo_widgets.c:483:6:vApplicationMallocFailedHook	0	static
+littlevgl_demo_widgets.c:492:6:vApplicationTickHook	0	static
+littlevgl_demo_widgets.c:505:6:vApplicationStackOverflowHook	0	static

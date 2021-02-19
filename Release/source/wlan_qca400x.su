@@ -1,0 +1,2 @@
+wlan_qca400x.c:88:5:wlan_driver_start	16	static
+wlan_qca400x.c:129:21:wlan_get_context	0	static

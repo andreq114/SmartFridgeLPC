@@ -1,0 +1,7 @@
+api_init.c:59:6:Api_BootProfile	16	static
+api_init.c:73:1:Api_InitStart	24	static
+api_init.c:107:1:Api_InitFinish	24	static
+api_init.c:155:17:wmi_cmd_process	32	static
+api_init.c:185:6:Api_WMIInitFinish	32	static
+api_init.c:253:1:Api_DeInitStart	16	static
+api_init.c:266:1:Api_DeInitFinish	24	static

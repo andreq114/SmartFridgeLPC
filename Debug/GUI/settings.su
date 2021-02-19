@@ -1,0 +1,8 @@
+lv_disp.h:120:20:lv_scr_load	16	static
+lv_cont.h:169:20:lv_cont_set_fit	24	static
+lv_btn.h:144:20:lv_btn_set_fit	16	static
+lv_slider.h:105:20:lv_slider_set_range	16	static
+settings.c:17:13:slider_brightness_evt_handler	16	static
+settings.c:25:13:btn_img_return_evt_handler	16	static
+settings.c:31:12:SETTINGS_Init	16	static
+settings.c:64:6:SETTINGS_Show	16	static

@@ -1,0 +1,11 @@
+fsl_spi_dma.c:100:13:XferToFifoWR	16	static
+fsl_spi_dma.c:106:13:SpiConfigToFifoWR	16	static
+fsl_spi_dma.c:113:13:PrepareTxLastWord	24	static
+fsl_spi_dma.c:127:13:SPI_SetupDummy	32	static
+fsl_spi_dma.c:157:10:SPI_MasterTransferCreateHandleDMA	32	static
+fsl_spi_dma.c:215:10:SPI_MasterTransferDMA	120	static
+fsl_spi_dma.c:413:10:SPI_MasterHalfDuplexTransferDMA	48	static
+fsl_spi_dma.c:466:13:SPI_RxDMACallback	48	static
+fsl_spi_dma.c:486:13:SPI_TxDMACallback	48	static
+fsl_spi_dma.c:512:6:SPI_MasterTransferAbortDMA	16	static
+fsl_spi_dma.c:537:10:SPI_MasterTransferGetCountDMA	32	static

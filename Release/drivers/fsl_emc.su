@@ -1,0 +1,6 @@
+fsl_emc.c:127:17:EMC_ModeOffset	0	static
+fsl_emc.c:107:17:EMC_CalculateTimerCycles.isra.0	16	static
+fsl_emc.c:187:6:EMC_Init	16	static
+fsl_emc.c:229:6:EMC_DynamicMemInit	32	static
+fsl_emc.c:380:6:EMC_StaticMemInit	24	static
+fsl_emc.c:436:6:EMC_Deinit	0	static

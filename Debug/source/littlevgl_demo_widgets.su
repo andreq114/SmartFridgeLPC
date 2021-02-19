@@ -1,0 +1,17 @@
+fsl_clock.h:698:20:CLOCK_EnableClock	24	static
+fsl_gpio.h:153:20:GPIO_PinWrite	24	static
+lv_disp.h:97:26:lv_scr_act	8	static
+littlevgl_demo_widgets.c:95:6:connectWiFi	32	static
+littlevgl_demo_widgets.c:125:6:translateList	24	static
+littlevgl_demo_widgets.c:206:13:event_handler	16	static
+littlevgl_demo_widgets.c:231:13:myConsole	24	static
+littlevgl_demo_widgets.c:257:13:menuDisconnect	8	static
+littlevgl_demo_widgets.c:263:13:menuAllStateMachine	8	static
+littlevgl_demo_widgets.c:286:6:task_sendProductsToThingspeak	16	static
+littlevgl_demo_widgets.c:299:6:task_main	24	static
+littlevgl_demo_widgets.c:337:13:AppTask	16	static
+littlevgl_demo_widgets.c:368:13:RFID_Task	16	static
+littlevgl_demo_widgets.c:398:5:main	24	static
+littlevgl_demo_widgets.c:472:6:vApplicationMallocFailedHook	4	static
+littlevgl_demo_widgets.c:481:6:vApplicationTickHook	8	static
+littlevgl_demo_widgets.c:494:6:vApplicationStackOverflowHook	16	static

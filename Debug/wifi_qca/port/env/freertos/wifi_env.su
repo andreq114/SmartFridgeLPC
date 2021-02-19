@@ -1,0 +1,15 @@
+wifi_env.c:12:6:a_free	16	static
+wifi_env.c:20:7:a_malloc	24	static
+wifi_env.c:36:10:a_mutex_init	16	static
+wifi_env.c:50:10:a_mutex_acquire	24	static
+wifi_env.c:67:10:a_mutex_release	24	static
+wifi_env.c:86:9:a_is_mutex_valid	16	static
+wifi_env.c:92:10:a_mutex_delete	16	static
+wifi_env.c:101:10:a_event_delete	16	static
+wifi_env.c:109:10:a_event_init	16	static
+wifi_env.c:126:10:a_event_clear	24	static
+wifi_env.c:142:10:a_event_set	32	static
+wifi_env.c:162:10:a_event_wait	48	static
+wifi_env.c:196:10:a_time_get_msec	16	static
+wifi_env.c:218:6:a_enter_critical	32	static
+wifi_env.c:240:6:a_exit_critical	24	static

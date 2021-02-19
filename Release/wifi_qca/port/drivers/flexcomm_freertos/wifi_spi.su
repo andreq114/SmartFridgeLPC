@@ -1,0 +1,9 @@
+wifi_spi.c:188:17:WIFIDRVS_SPI_Transfer	32	static
+wifi_spi.c:61:13:SPI_DMA_MasterUserCallback	16	static
+wifi_spi.c:72:13:SPI_MasterUserCallback	16	static
+wifi_spi.c:245:10:WIFIDRVS_SPI_Init	32	static
+wifi_spi.c:298:10:WIFIDRVS_SPI_Deinit	8	static
+wifi_spi.c:312:10:WIFIDRVS_SPI_GetDefaultConfig	16	static
+wifi_spi.c:327:10:WIFIDRVS_SPI_GetSPIConfig	16	static
+wifi_spi.c:349:10:WIFIDRVS_SPI_InOutToken	40	static
+wifi_spi.c:372:10:WIFIDRVS_SPI_InOutBuffer	32	static

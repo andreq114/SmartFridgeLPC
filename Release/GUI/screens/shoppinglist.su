@@ -1,0 +1,6 @@
+shoppinglist.c:95:13:list_btn_evt_handler	16	static
+shoppinglist.c:33:13:btn_img_return_evt_handler	0	static
+shoppinglist.c:72:13:btn_img_add_prod_evt_handler	32	static
+shoppinglist.c:39:13:keyboard_evt_handler	24	static
+shoppinglist.c:118:6:SHOPLIST_Init	40	static
+shoppinglist.c:159:6:SHOPLIST_Show	24	static

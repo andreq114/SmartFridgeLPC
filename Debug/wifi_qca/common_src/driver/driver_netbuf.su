@@ -1,0 +1,3 @@
+driver_netbuf.c:102:7:a_netbuf_peek_queue	16	static
+driver_netbuf.c:107:9:a_netbuf_queue_size	16	static
+driver_netbuf.c:112:9:a_netbuf_queue_empty	16	static

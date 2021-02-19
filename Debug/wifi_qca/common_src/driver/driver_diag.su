@@ -1,0 +1,6 @@
+driver_diag.c:55:17:Driver_SetAddressWindowRegister	120	static
+driver_diag.c:145:1:Driver_ReadRegDiag	112	static
+driver_diag.c:180:1:Driver_WriteRegDiag	112	static
+driver_diag.c:217:1:Driver_ReadDataDiag	32	static
+driver_diag.c:243:1:Driver_WriteDataDiag	32	static
+driver_diag.c:272:1:Driver_DumpAssertInfo	48	static

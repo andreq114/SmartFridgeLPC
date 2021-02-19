@@ -1,0 +1,2 @@
+qcom_legacy.c:51:10:depr_qcom_set_scan	8	static
+qcom_legacy.c:64:10:depr_qcom_ota_done	8	static

@@ -1,0 +1,11 @@
+fsl_gpio.h:153:20:GPIO_PinWrite	24	static
+smart_fridge.c:65:6:groupProductData	40	static
+smart_fridge.c:197:6:setConsoleLabel	16	static
+smart_fridge.c:201:6:dispPRINTF	16	static
+smart_fridge.c:208:6:sendProductsToThinkspeak	40	static
+smart_fridge.c:232:6:detectProduct	24	static
+smart_fridge.c:309:6:startRFID_Module	24	static
+smart_fridge.c:314:6:sortList	16	static
+smart_fridge.c:322:6:NTAG215_read_config	4	static
+smart_fridge.c:335:6:MIFARE_read_config	4	static
+smart_fridge.c:349:6:readProductsData	152	static

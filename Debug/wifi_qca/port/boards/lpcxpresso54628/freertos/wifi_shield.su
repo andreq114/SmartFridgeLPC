@@ -1,0 +1,10 @@
+core_cm4.h:1679:22:__NVIC_EnableIRQ	16	static
+core_cm4.h:1809:22:__NVIC_SetPriority	16	static
+fsl_clock.h:698:20:CLOCK_EnableClock	24	static
+fsl_gpio.h:153:20:GPIO_PinWrite	24	static
+wifi_shield.c:25:10:WIFISHIELD_Init	16	static
+wifi_shield.c:73:10:WIFISHIELD_InitDrivers	104	static
+wifi_shield.c:124:10:WIFISHIELD_DeinitDrivers	16	static
+wifi_shield.c:133:10:WIFISHIELD_PowerUp	16	static
+wifi_shield.c:149:6:WIFISHIELD_NotifyDriverTask	24	static
+wifi_shield.c:163:13:PINT_callback	16	static

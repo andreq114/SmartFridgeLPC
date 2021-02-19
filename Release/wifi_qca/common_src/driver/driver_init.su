@@ -1,0 +1,7 @@
+driver_init.c:82:17:ConnectService	32	static
+driver_init.c:309:1:Driver_ContextInit	24	static
+driver_init.c:381:1:Driver_ContextDeInit	8	static
+driver_init.c:557:1:Driver_DeInit	16	static
+driver_init.c:601:1:Driver_GetTargetInfo	24	static
+driver_init.c:703:1:Driver_BootComm	32	static
+driver_init.c:407:1:Driver_Init	48	static

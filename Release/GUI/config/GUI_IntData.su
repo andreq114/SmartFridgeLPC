@@ -1,0 +1,5 @@
+GUI_IntData.c:92:6:GUI_IntData_GroupData	56	static
+GUI_IntData.c:107:9:GUI_IntData_GetGroups	0	static
+GUI_IntData.c:111:6:GUI_IntData_SetProductList	0	static
+GUI_IntData.c:168:9:GUI_IntData_AddProdToShopList	24	static
+GUI_IntData.c:186:9:GUI_IntData_DelProdFromShopList	32	static

@@ -1,0 +1,2 @@
+fsl_gpio.c:43:6:GPIO_PortInit	4	static
+fsl_gpio.c:84:6:GPIO_PinInit	12	static

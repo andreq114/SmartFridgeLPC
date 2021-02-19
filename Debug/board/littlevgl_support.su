@@ -1,0 +1,16 @@
+core_cm4.h:1679:22:__NVIC_EnableIRQ	16	static
+core_cm4.h:1809:22:__NVIC_SetPriority	16	static
+fsl_clock.h:698:20:CLOCK_EnableClock	24	static
+fsl_gpio.h:153:20:GPIO_PinWrite	24	static
+fsl_lcdc.h:276:20:LCDC_Start	16	static
+fsl_lcdc.h:302:20:LCDC_PowerUp	16	static
+littlevgl_support.c:71:6:lv_port_pre_init	4	static
+littlevgl_support.c:75:6:lv_port_disp_init	48	static
+littlevgl_support.c:111:6:LCD_IRQHandler	16	static
+littlevgl_support.c:138:13:DEMO_InitLcdClock	8	static
+littlevgl_support.c:145:13:DEMO_InitLcdBackLight	16	static
+littlevgl_support.c:156:13:DEMO_InitLcd	48	static
+littlevgl_support.c:213:13:DEMO_FlushDisplay	24	static
+littlevgl_support.c:236:6:lv_port_indev_init	40	static
+littlevgl_support.c:255:13:DEMO_InitTouch	32	static
+littlevgl_support.c:291:13:DEMO_ReadTouch	24	static

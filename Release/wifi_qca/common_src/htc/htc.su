@@ -1,0 +1,12 @@
+htc.c:165:13:Htc_DistributeCredits	0	static
+htc.c:44:6:Htc_PrepareRecvPacket	16	static
+htc.c:75:6:Htc_RxComplete	8	static
+htc.c:87:10:Htc_ReadCreditCounter	104	static
+htc.c:107:6:Htc_GetCreditCounterUpdate	16	static
+htc.c:243:6:HTC_ProcessCpuInterrupt	104	static
+htc.c:480:1:Htc_SendPacket	24	static
+htc.c:593:1:Htc_ProcessTxComplete	0	static
+htc.c:611:1:Htc_ProcessRecvHeader	56	static
+htc.c:751:1:HTC_ConnectService	40	static
+htc.c:710:1:HTC_WaitTarget	48	static
+htc.c:837:1:HTC_Start	8	static

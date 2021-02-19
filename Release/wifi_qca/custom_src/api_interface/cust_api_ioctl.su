@@ -1,0 +1,3 @@
+cust_api_ioctl.c:71:17:config_dump_target_assert_info	256	static
+cust_api_ioctl.c:105:9:ath_ioctl_handler	136	static
+cust_api_ioctl.c:1671:10:Custom_Api_Mediactl	136	static

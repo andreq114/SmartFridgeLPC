@@ -1,0 +1,14 @@
+driver_main.c:66:1:Driver_Main	32	static
+driver_main.c:257:6:Driver_ReportRxBuffStatus	24	static
+driver_main.c:291:1:Driver_CompleteRequest	32	static
+driver_main.c:324:9:Driver_TxReady	40	static
+driver_main.c:530:9:Driver_RxReady	40	static
+driver_main.c:659:6:Driver_DropTxDataPackets	40	static
+driver_main.c:752:1:Driver_WaitForCondition	48	static
+driver_main.c:783:10:setup_host_dset	16	static
+driver_main.c:794:6:Atheros_Driver_Task	48	static
+driver_main.c:860:10:Driver_CreateThread	32	static
+driver_main.c:872:1:Driver_DestroyThread	16	static
+driver_main.c:879:6:Driver_WakeDriver	16	static
+driver_main.c:884:6:Driver_WakeUser	16	static
+driver_main.c:889:6:qcadrv_assert_func	24	static

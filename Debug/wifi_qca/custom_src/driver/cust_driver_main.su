@@ -1,0 +1,4 @@
+cust_driver_main.c:46:13:Custom_FreeRxRequest	16	static
+cust_driver_main.c:78:7:Custom_GetRxRequest	32	static
+cust_driver_main.c:124:6:Custom_Driver_ContextDeInit	24	static
+cust_driver_main.c:150:1:Custom_Driver_ContextInit	40	static

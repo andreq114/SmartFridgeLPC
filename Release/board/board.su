@@ -1,0 +1,3 @@
+board.c:54:10:BOARD_InitDebugConsole	0	static
+board.c:71:6:BOARD_InitSDRAM	88	static
+board.c:117:6:BOARD_InitQSPI_FLASH	80	static

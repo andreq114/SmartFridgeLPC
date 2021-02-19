@@ -1,0 +1,12 @@
+cust_api_wmi_rx.c:52:13:fill_scan_info	80	static
+cust_api_wmi_rx.c:135:13:fill_ext_scan_info	80	static
+cust_api_wmi_rx.c:219:6:Custom_Api_BssInfoEvent	48	static
+cust_api_wmi_rx.c:310:6:Custom_Api_ConnectEvent	48	static
+cust_api_wmi_rx.c:338:6:Custom_Api_DisconnectEvent	56	static
+cust_api_wmi_rx.c:377:6:Custom_Api_ReadyEvent	32	static
+cust_api_wmi_rx.c:389:6:Custom_Api_GpioDataEvent	24	static
+cust_api_wmi_rx.c:397:6:Custom_Api_PfmDataEvent	24	static
+cust_api_wmi_rx.c:405:6:Custom_Api_PfmDataDoneEvent	24	static
+cust_api_wmi_rx.c:413:6:Custom_Api_RSNASuccessEvent	32	static
+cust_api_wmi_rx.c:435:6:Custom_Api_BitRateEvent_tx	32	static
+cust_api_wmi_rx.c:458:6:Custom_Api_ProbeReq_Event	32	static
