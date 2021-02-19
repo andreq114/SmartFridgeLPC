@@ -16,31 +16,27 @@
 #include "lvgl.h"
 
 enum StatusCode{
-		STATUS_OK				,	// Success
-		STATUS_ERROR			,	// Error in communication
-		STATUS_COLLISION		,	// Collission detected
-		STATUS_TIMEOUT			,	// Timeout in communication.
-		STATUS_NO_ROOM			,	// A buffer is not big enough.
-		STATUS_INTERNAL_ERROR	,	// Internal error in the code. Should not happen ;-)
-		STATUS_INVALID			,	// Invalid argument.
-		STATUS_CRC_WRONG		,	// The CRC_A does not match
-		STATUS_MIFARE_NACK		= 0xff	// A MIFARE PICC responded with NAK.
+		STATUS_OK				,			// Success
+		STATUS_ERROR			,			// Error in communication
+		STATUS_COLLISION		,			// Collission detected
+		STATUS_TIMEOUT			,			// Timeout in communication.
+		STATUS_NO_ROOM			,			// A buffer is not big enough.
+		STATUS_INTERNAL_ERROR	,			// Internal error in the code. Should not happen ;-)
+		STATUS_INVALID			,			// Invalid argument.
+		STATUS_CRC_WRONG		,			// The CRC_A does not match
+		STATUS_MIFARE_NACK		= 0xff		// A MIFARE PICC responded with NAK.
 };
 
 typedef struct {
-	uint8_t size; // Number of bytes in the UID. 4, 7 or 10.
+	uint8_t size; 			// Number of bytes in the UID. 4, 7 or 10.
 	uint8_t uidByte[10];
-	uint8_t sak; // The SAK (Select acknowledge) byte returned from the PICC
-				 // after successful selection.
+	uint8_t sak; 			// The SAK (Select acknowledge) byte returned from the PICC
+				 	 	 	// after successful selection.
 } Uid;
 
 typedef struct {
 	uint8_t keyByte[MF_KEY_SIZE];
 } MIFARE_KEY;
-
-
-void setConsoleLabel2(lv_obj_t *labelek);
-void dispPRINTFth(const char *text);
 
 
 void RC522_Init(SPI_Type *base,int rstPort,int rstPin);
@@ -95,7 +91,6 @@ enum StatusCode RC522_MIFARE_Read(uint8_t blockAddress,uint8_t *buffer,uint8_t *
 
 enum StatusCode RC522_NTAG215_AUTH(uint8_t* passWord, uint8_t pACK[]) ;
 
-void RC522_DumpMifareUltralightToSerial();
 
 Uid RC522_getUid();
 

@@ -22,13 +22,7 @@
 #include "data.h"
 
 #define INITIAL_PRODUCTS 0  // If we want to have some products on start
-/*
-#define PRODUCT_NAME_BLOCK1	12
-#define PRODUCT_NAME_BLOCK2	13
-#define PRODUCT_NAME_BLOCK3 14
-#define PRODUCT_END_DATE_BLOCK 16
-#define PRODUCT_CATEGORY_BLOCK 17
-*/
+
 
 // -------------------------------------- MIFARE 1k BLOCKS ------------------------------
 // SECTOR ------- BLOCK ------- DATA
@@ -95,12 +89,11 @@
 #define THIRD_SECTOR_TRAILER 15
 #define FOURTH_SECTOR_TRAILER 19
 #define FIFTH_SECTOR_TRAILER 23
-// Hardwired SSID, passphrase, auth and cipher algo of AP to connect to
-// Change this to fit your AP
+
 
 #define WWW_SERVER "api.thingspeak.com"
 
-//#define WWW_SERVER "nxp.com"
+
 
 
 
@@ -124,22 +117,17 @@ enum TARGET{
 extern Product products[];
 extern uint32_t products_numb;
 extern bool listChanged;
-extern volatile bool dataUpdateAvailable;
+extern volatile bool thingSpeakUpdateAvailable;
+extern volatile bool flashUpdateAvailable;
 extern volatile bool shopListChanged;
-
-
-void setConsoleLabel(lv_obj_t *label);
-
-void connectWiFi(void);
+extern volatile bool flashShopListChanged;
 
 void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]);
+extern void SF_sendProductsToThingSpeak(char (*shoplist)[SHOPLIST_NAME_SIZE]);
 
-extern void sendProductsToThinkspeak(char (*shoplist)[SHOPLIST_NAME_SIZE]);
-void startRFID_Module(SPI_Type *base,int rstPort,int rstPin);
+void SF_startRFID_Module(SPI_Type *base,int rstPort,int rstPin);
 
-void dispPRINTF(const char *text,lv_obj_t *label);
-bool detectProduct();
-
+bool SF_detectProduct();
 void sortList();
 void NTAG215_read_config();
 void MIFARE_read_config();

@@ -31,8 +31,6 @@
 
 #define TIME_SERVER "showcase.api.linx.twenty57.net"
 
-//#define SPIFI_DATA_START_ADDRESS 819200
-//#define SPIFI_NUMBER_OF_PRODUCTS_ADDRESS SPIFI_DATA_START_ADDRESS+3501
 
 #define SPIFI_DATA_START_ADDRESS 143360
 #define SPIFI_NUMBER_OF_PRODUCTS_ADDRESS SPIFI_DATA_START_ADDRESS+56001
@@ -42,25 +40,11 @@
 #define NETWORK_DATA_LENGTH 98
 #define PRODUCTS_DATA_LENGTH_BYTES 3500
 
-//#define SPIFI_WIFI_SSID_ADDRESS
 
-#define EXAMPLE_SPI_MASTER          SPI0/*
-#define EXAMPLE_SPI_MASTER_IRQ      FLEXCOMM0_IRQn
-#define EXAMPLE_SPI_MASTER_CLK_SRC  kCLOCK_Flexcomm0
-#define EXAMPLE_SPI_MASTER_CLK_FREQ CLOCK_GetFlexCommClkFreq(0)
-#define EXAMPLE_SPI_SSEL            0
-#define EXAMPLE_SPI_SPOL            kSPI_SpolActiveAllLow
+#define EXAMPLE_SPI_MASTER          SPI0
 
-/*******************************************************************************
- * Definitions
- ******************************************************************************/
 static volatile bool s_lvgl_initialized = false;
-static volatile bool GUI_Initialized = false;
 
-SemaphoreHandle_t xSemaphore = NULL;
-/*******************************************************************************
- * Prototypes
- ******************************************************************************/
 
 const int TASK_MAIN_PRIO       = configMAX_PRIORITIES - 3;
 const int TASK_MAIN_STACK_SIZE = 800;
@@ -69,8 +53,7 @@ portSTACK_TYPE *task_main_stack = NULL;
 TaskHandle_t task_main_task_handler;
 TaskHandle_t task_disp_task_handler;
 
-// Hardwired SSID, passphrase, auth and cipher algo of AP to connect to
-// Change this to fit your AP
+
 
 #define SSID_LENGTH 33
 #define PASSWORD_LENGTH 65
@@ -90,9 +73,6 @@ QCOM_PASSPHRASE g_passphrase;
 WLAN_AUTH_MODE g_auth    = WLAN_AUTH_WPA2_PSK;
 WLAN_CRYPT_TYPE g_cipher = WLAN_CRYPT_AES_CRYPT;
 
-// ============================================================================
-// Menu Handling
-// ============================================================================
 
 extern int numIrqs;
 extern int initTime;
@@ -124,6 +104,8 @@ spifi_command_t command[COMMAND_NUM] = {
 
 void check_if_finish();
 void saveNetworkInFlash(void);
+
+// Function to connect with Wifi network
 bool connectWiF(const char *ssid, const char *password){
 
 	apDisconnect();
@@ -139,7 +121,6 @@ bool connectWiF(const char *ssid, const char *password){
 	int wifiTimer = 0;
 	apConnect(&g_ssid, &g_passphrase, g_auth, g_cipher);
 
-	//dispPRINTF("Before get dhcp",label3);
 	while(wifiTimer < 5){
 		if(!dhcpGetted){
 			if(isConnected()){
@@ -174,10 +155,10 @@ bool connectWiF(const char *ssid, const char *password){
 		wifiTimer++;
 		vTaskDelay(MSEC_TO_TICK(1000));
 	}
-	//dispPRINTF("Nie polaczono\n",label3);
 	return false;
 }
 
+// Function to disconnect with Wifi with which we are currently connected
 void disconnectWifi(void){
 	if(isConnected()){
 		GPIO_PinWrite(GPIO,1,22,1);
@@ -203,6 +184,8 @@ void disconnectWifi(void){
 	}
 }
 
+
+// Function to save wifi SSID and Password in SPIFI
 void saveNetworkInFlash(void){
 
 	uint32_t data=0, page=0;
@@ -248,6 +231,8 @@ void saveNetworkInFlash(void){
 	SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
 }
 
+
+// Function to read Wifi SSID and Password and connect with it
 void autoConnectWifi(void){
 	uint8_t *val;
 	/* Reset to memory command mode */
@@ -269,12 +254,9 @@ void autoConnectWifi(void){
 
 	connectWiF(wifi_data.WIFI_SSID,wifi_data.WIFI_PASSWORD);
 
-
-
 }
 
-
-
+// Function to translate products list from smart_fridge file to another for littlevgl use
 void translateList(){
 	if(products_numb >= 25)
 		products_numb = 0;
@@ -285,8 +267,6 @@ void translateList(){
 		for(int j=0;j<11;j++){
 			DATA_ProdList[i].date[j] = products[i].expirationDate[j];
 		}
-
-
 
 		int j = 0;
 		int k = 0;
@@ -324,13 +304,11 @@ void translateList(){
 			k++;
 		}
 		DATA_ProdList[i].name[j] = '\0';
-		//j++;
-
-
-
 
 	}
 }
+
+// Function to check if writing to SPIFI is finish
 void check_if_finish()
 {
     uint8_t val = 0;
@@ -345,6 +323,9 @@ void check_if_finish()
     } while (val & 0x1);
 }
 
+
+
+// Function to read products nad shopping list from SPIFI
 void loadDataFromFlashMemory(){
 	uint8_t *val;
 	/* Reset to memory command mode */
@@ -373,17 +354,12 @@ void loadDataFromFlashMemory(){
 	// Read shop list from flash
 	shoplistptr = &shoplist[0][0];
 
-	int licznik = 0;
-	bool ptr1 = false;
+
 	bool ptr2 = false;
 	bool ptr3 = false;
 	bool ptr4 = false;
 	bool ptr5 = false;
-	bool ptr6 = false;
-	bool ptr7 = false;
-	bool ptr8 = false;
-	bool ptr9 = false;
-	bool ptr10= false;
+
 
 	for(int i=0;i<SHOPLIST_NAME_SIZE*5;i++){
 		val = (uint8_t *)(FSL_FEATURE_SPIFI_START_ADDR+SPIFI_SHOP_LIST_ADDRESS + i);
@@ -412,88 +388,10 @@ void loadDataFromFlashMemory(){
 		*shoplistptr = *val;
 		shoplistptr++;
 	}
-
-
-
-
-
 }
-//void saveDataInFlash(){
-//
-//
-//	/* Setup memory command */
-//		//SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
-//
-//		/* Reset the SPIFI to switch to command mode */
-//		SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
-//
-//		EnableIRQ(SPIFI0_IRQn);
-//
-//
-//		// WRITE TO SPIFI
-//		uint8_t *productsptr;
-//		uint32_t data=0, page=0;
-//		int i=0;
-//		int j=0;
-//		int k=0;
-//
-//		productsptr = &products[0].size;
-//
-//			/* Write enable */
-//			SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-//			/* Set address */
-//			SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, 0U+SPIFI_DATA_START_ADDRESS);
-//			/* Erase sector */
-//			SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
-//			/* Check if finished */
-//			check_if_finish();
-//			while (page < ((SECTOR_SIZE / PAGE_SIZE))-8)
-//			{
-//				SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-//				SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_DATA_START_ADDRESS+ page * PAGE_SIZE);
-//				SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
-//				for (i = 0; i < PAGE_SIZE; i += 4)
-//				{
-//					if(k < 3500){
-//						for (j = 0; j < 4; j++)
-//						{
-//							if(k < 3500){
-//								data |= ((uint32_t)(*productsptr)) << (j * 8);
-//								productsptr++;
-//								k++;
-//							}
-//						}
-//
-//						SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
-//						data = 0;
-//					}
-//				}
-//				page++;
-//				check_if_finish();
-//			}
-//
-//
-//
-//		// WRITE NUMBER OF PRODUCTS
-//		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-//		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NUMBER_OF_PRODUCTS_ADDRESS);
-//		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
-//
-//		//data |= ((index)) << (j * 8);
-//		SPIFI_WriteData(BOARD_FLASH_SPIFI, index);
-//		check_if_finish();
-//
-//		/* Reset to memory command mode */
-//		SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
-//		SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
-//		dataUpdateAvailable = false;
-//}
 
+// Function to save products and shopping list to SPIFI
 void saveDataInFlash(){
-
-
-	/* Setup memory command */
-	//SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
 
 	/* Reset the SPIFI to switch to command mode */
 	SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
@@ -510,63 +408,62 @@ void saveDataInFlash(){
 	int k=0;
 	int l=0;
 	productsptr = &products[0].size;
-	//while(l < 14){
-		/* Write enable */
+
+	/* Write enable */
+	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
+	/* Set address */
+	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, 0U+SPIFI_DATA_START_ADDRESS+l*4096);
+	/* Erase sector */
+	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
+	/* Check if finished */
+	check_if_finish();
+
+
+	while (page < 14)
+	{
 		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-		/* Set address */
-		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, 0U+SPIFI_DATA_START_ADDRESS+l*4096);
-		/* Erase sector */
-		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
-		/* Check if finished */
-		check_if_finish();
-
-
-		while (page < 14)
-		{
-			SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-			SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_DATA_START_ADDRESS+l*4096+ page * PAGE_SIZE);
-			SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
-			for (i = 0; i < PAGE_SIZE; i += 4)
-			{
-				if(k < PRODUCTS_DATA_LENGTH_BYTES){
-					for (j = 0; j < 4; j++)
-					{
-						if(k < PRODUCTS_DATA_LENGTH_BYTES){
-							data |= ((uint32_t)(*productsptr)) << (j * 8);
-							productsptr++;
-							k++;
-						}else{
-							data|=((uint32_t)(0)) << (j * 8);
-						}
-					}
-					SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
-					data = 0;
-				}else{
-					SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
-					data = 0;
-				}
-
-			}
-			page++;
-			check_if_finish();
-		}
-		//l++;
-	//}
-		vTaskDelay(200);
-
-
-
-		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-		/* Set address */
-		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NUMBER_OF_PRODUCTS_ADDRESS);
-		/* Erase sector */
-		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
-		/* Check if finished */
-		check_if_finish();
-		// WRITE NUMBER OF PRODUCTS
-		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NUMBER_OF_PRODUCTS_ADDRESS);
+		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_DATA_START_ADDRESS+l*4096+ page * PAGE_SIZE);
 		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
+		for (i = 0; i < PAGE_SIZE; i += 4)
+		{
+			if(k < PRODUCTS_DATA_LENGTH_BYTES){
+				for (j = 0; j < 4; j++)
+				{
+					if(k < PRODUCTS_DATA_LENGTH_BYTES){
+						data |= ((uint32_t)(*productsptr)) << (j * 8);
+						productsptr++;
+						k++;
+					}else{
+						data|=((uint32_t)(0)) << (j * 8);
+					}
+				}
+				SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
+				data = 0;
+			}else{
+				SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
+				data = 0;
+			}
+
+		}
+		page++;
+		check_if_finish();
+	}
+
+	vTaskDelay(200);
+
+
+
+	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
+	/* Set address */
+	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NUMBER_OF_PRODUCTS_ADDRESS);
+	/* Erase sector */
+	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
+	/* Check if finished */
+	check_if_finish();
+	// WRITE NUMBER OF PRODUCTS
+	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
+	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NUMBER_OF_PRODUCTS_ADDRESS);
+	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
 
 	for (i = 0; i < PAGE_SIZE; i += 4)
 	{
@@ -588,12 +485,8 @@ void saveDataInFlash(){
 	check_if_finish();
 
 
-	//data |= ((index)) << (j * 8);
-	//SPIFI_WriteData(BOARD_FLASH_SPIFI, products_numb);
 
-
-
-//	// WRITE SHOP LIST
+	// WRITE SHOP LIST
 	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
 	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_SHOP_LIST_ADDRESS);
 	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
@@ -648,140 +541,50 @@ void saveDataInFlash(){
 			}
 		}
 
-			SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
-			data = 0;
-
-
-
+		SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
+		data = 0;
 
 	}
 	check_if_finish();
 
-
-
 	/* Reset to memory command mode */
 	SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
 	SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
+	flashUpdateAvailable = false;
+	shopListChanged = false;
 }
 
 
-// Przeniesione do Init_Peripherals
-/*
-void RC522_SPI_Config(){
-	spi_master_config_t userConfig = {0};
-	uint32_t srcFreq               = 0;
-	/* attach 12 MHz clock to SPI9
-	CLOCK_AttachClk(kFRO12M_to_FLEXCOMM0);
-	/* reset FLEXCOMM for SPI
-	RESET_PeripheralReset(kFC0_RST_SHIFT_RSTn);
-    SPI_MasterGetDefaultConfig(&userConfig);
-    srcFreq            = EXAMPLE_SPI_MASTER_CLK_FREQ;
-    userConfig.sselNum = (spi_ssel_t)EXAMPLE_SPI_SSEL;
-    userConfig.sselPol = (spi_spol_t)EXAMPLE_SPI_SPOL;
-    SPI_MasterInit(EXAMPLE_SPI_MASTER, &userConfig, srcFreq);
-    status_t status = SPI_MasterSetBaud(EXAMPLE_SPI_MASTER,4000000,EXAMPLE_SPI_MASTER_CLK_FREQ);
-    if(status == kStatus_Success){
-    	//dispPRINTF("\r\nUSTAWIONO BAUD",label3);
-    }else if(status == kStatus_SPI_BaudrateNotSupport){
-    	//dispPRINTF("\r\nNie obslugiwany baud",label3);
-    }
-    for(volatile int i=0;i<100000;i++);
-}
-*/
-
-
-static void myConsole();
-static void event_handler(lv_obj_t *obj,lv_event_t event) {
-	if(event == LV_EVENT_CLICKED){
-		lv_textarea_set_text(label3, "");
-	}
-}
-
-/*
-static void reset_button(void) {
-  /*Add a button
-  lv_obj_t *btn1 = lv_btn_create(lv_scr_act(), NULL);           /*Add to the active screen
-  lv_obj_set_event_cb(btn1,event_handler);
-  lv_obj_align(btn1,NULL,LV_ALIGN_IN_TOP_RIGHT,0,0);
-  //lv_obj_set_pos(btn1, 2, 2);                                    /*Adjust the position
-  //lv_obj_set_size(btn1, 96, 30);                                 /* set size of button
-
-
-  /*Add text
-  lv_obj_t *label = lv_label_create(btn1, NULL);                  /*Put on 'btn1'
-  lv_label_set_text(label, "Clear");
-}
-
-*/
-
-
-
-static void myConsole(void) {
-    /*Create a Label on the currently active screen*/
-    lv_obj_t *titlel =  lv_label_create(lv_scr_act(), NULL);
-    lv_obj_t *label2 =  lv_label_create(lv_scr_act(), NULL);
-    label3 =  lv_textarea_create(lv_scr_act(), NULL);
-
-    /*Modify the Label's text*/
-    lv_label_set_text(titlel, "TERMINAL");
-    lv_label_set_text(label2, "-----------------------------------------------------------------------------------------------");
-    lv_textarea_set_text(label3, "");
-    lv_obj_set_size(label3, 490, 200);
-
-
-    /* Align the Label to the center
-     * NULL means align on parent (which is the screen now)
-     * 0, 0 at the end means an x, y offset after alignment*/
-    lv_obj_align(titlel, NULL, LV_ALIGN_IN_TOP_LEFT, 205, 0);
-    lv_obj_align(label2, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 30);
-    lv_obj_align(label3, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 60);
-
-    reset_button();
-}
-
-
+// Function to scan networks and write it to list from which littlevgl will update
+// it on screen
 static void scanNetworks(){
 	apScan(DATA_Networks);
 }
 
-
-
-
-
-//#define WWW_SERVER "cr.yp.to"
-
-// ============================================================================
-// Main
-// ============================================================================
-
+// This task is checking every 20 s that is there any change in products/shopping list - if
+// there is then save products list and shopping list in SPIFI and if we are connected
+// to wifi send it to ThingSpeak server
 void task_sendProductsToThingspeak(void *param){
-
-//	while(!GUI_Initialized){
-//		vTaskDelay(200);
-//	}
-
-	//DATA_DataChanged = true;
 	while(1){
-		if(dataUpdateAvailable || shopListChanged){
-			if(isConnected() && state == STATE_CONNECTED){
-				sendProductsToThinkspeak(shoplist);
-
-
-			}
+		if(flashUpdateAvailable || shopListChanged){
+			flashShopListChanged = shopListChanged;
 			saveDataInFlash();
+		}
 
+		if(thingSpeakUpdateAvailable || flashShopListChanged){
+
+			if(isConnected() && state == STATE_CONNECTED){
+				SF_sendProductsToThingSpeak(shoplist);
+			}
 		}
 
 		vTaskDelay(MSEC_TO_TICK(20000));
-		//scanNetworks();
 	}
 }
 
-
+// WiFi task
 void task_main(void *param)
 {
-	//vTaskSuspend(task_disp_task_handler);
-	PRINTF("CREATING WIFI TASK\r\n");
     int32_t result = 0;
     (void)result;
 
@@ -794,33 +597,24 @@ void task_main(void *param)
     result = wlan_driver_start();
     PRINTF("CREATING WIFI TASK2\r\n");
     assert(A_OK == result);
-    //vTaskResume(task_disp_task_handler);
-    //vTaskDelay( 100 );
+
+    // Buzzer signal, it tell us that wifi module starts
     GPIO_PinWrite(GPIO,1,22,1);
     vTaskDelay(MSEC_TO_TICK(500));
     GPIO_PinWrite(GPIO,1,22,0);
 
-
     autoConnectWifi();
-    //apScan();
-    //connectWiFi();
-    //apDisconnect();
-    //lv_textarea_add_text(label3, "Polaczono!");
 
-    //Configure RTC
 
 
     while (1)
     {
-
-
     	vTaskDelay(MSEC_TO_TICK(50));
-
     }
 }
 
 
-
+// Littlevgl task
 static void AppTask(void *param)
 {
 
@@ -829,10 +623,7 @@ static void AppTask(void *param)
     lv_port_disp_init();
     lv_port_indev_init();
 
-
     s_lvgl_initialized = true;
-    //myConsole();
-    //setConsoleLabel(label3);
 
 
     GUI_Init();
@@ -848,47 +639,50 @@ static void AppTask(void *param)
     GUI_SetDisconnectNetworkEvent(disconnectWifi);
 
     shoplist = GUI_GetShopList();
-//
+
     loadDataFromFlashMemory();
     translateList();
-    //GUI_Initialized = true;
 
 #if INITIAL_PRODUCTS == 1
     translateList();
     DATA_DataChanged = true;
 #endif
 
-    //dispPRINTF("BEFORE LITTLEVGL LOOP\n",label3);
     for (;;)
     {
         lv_task_handler();
-        //vTaskSuspend();
     	vTaskDelay(5);
     }
 }
 
+// Task for get current time from http server, synchronize with RTC and every 1 s update int variable for littlevgl
 static void task_updateTime(void *param){
 	while(state != STATE_CONNECTED){
 		vTaskDelay(MSEC_TO_TICK(1000));
 	}
 	char timeBuff[500];
-	httpGet(TIME_SERVER,"UnixTime/tounix?date=now",timeBuff);
-	uint32_t number;
-	int timeBuffLength = strlen(timeBuff);
 	char timeTable[30];
+	uint32_t number;
 	rtc_datetime_t time_date_struct;
+	int timeBuffLength;
+
+	httpGet(TIME_SERVER,"UnixTime/tounix?date=now",timeBuff);
+	timeBuffLength = strlen(timeBuff);
+
 	for(int i=0;i<11;i++)
 		timeTable[i] = timeBuff[timeBuffLength-10+i];
+
 	number = atoi(timeTable);
+	// Time from this server is 1 hour behind - add one hour
 	number = number + 3600;
 	RTC_SecondToDateTime(number,&time_date_struct);
 	RTC_EnableTimer(RTC, false);
 
-	/* Set RTC time to default */
+	/* Sync time in RTC with this from http server */
 	RTC_SetDatetime(RTC, &time_date_struct);
+
 	/* Start the RTC time counter */
 	RTC_EnableTimer(RTC, true);
-
 	while(1){
 		DATA_Date = RTC_GetSecondFromRTC(RTC);
 		vTaskDelay(MSEC_TO_TICK(1000));
@@ -896,44 +690,26 @@ static void task_updateTime(void *param){
 
 }
 
+// Task for checking if any RFID card is in reader range, if is read data and add to list
 static void RFID_Task(void *param){
-	//BOARD_InitRC522Module();					//Init RC522 pins
-	//RC522_SPI_Config();							//Config SPI for RC522
-	startRFID_Module(EXAMPLE_SPI_MASTER,4,7);	//Init RC522, reset
 
-	//dispPRINTF("SKONFIGUROWANO RFID\n",label3);
+	SF_startRFID_Module(EXAMPLE_SPI_MASTER,4,7);	//Init RC522, reset
 	while (1)
 	{
-		//dispPRINTF("SZUKAM PRODUKTU\n");
-		if(detectProduct()){
+		if(SF_detectProduct()){
 			translateList();
 			DATA_DataChanged = true;
-			//products_numb = 5;
-			//dispPRINTF("WYKRYLEM!\n",label3);
-
-
-		}else{
-			//dispPRINTF("NIE WYKRYLEM..\n",label3);
 		}
-
 		vTaskDelay(MSEC_TO_TICK(460));
 
 	}
 }
-/*******************************************************************************
- * Code
- ******************************************************************************/
-/*!
- * @brief Main function
- */
+
+
 int main(void)
 {
 	   BaseType_t stat;
-
-
-
        CLOCK_EnableClock(kCLOCK_InputMux);
-
        BOARD_InitBootPins();
        BOARD_BootClockPLL220M();
        BOARD_InitBootClocks();
@@ -944,9 +720,6 @@ int main(void)
        RTC_Init(RTC);
 
        BOARD_InitQSPI_FLASH();
-      // BOARD_InitDebugConsole();
-       //xSemaphore = xSemaphoreCreateBinary();
-
 
        stat = xTaskCreate(AppTask, "littlevgl", configMINIMAL_STACK_SIZE + 800, NULL, tskIDLE_PRIORITY + 2, NULL);
 
@@ -957,8 +730,7 @@ int main(void)
     		   ;
        }
 
-       stat =
-    		   xTaskCreate(task_main, "main", TASK_MAIN_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, &task_main_task_handler);
+       stat = xTaskCreate(task_main, "main", TASK_MAIN_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, &task_main_task_handler);
        assert(pdPASS == stat);
 
        if (pdPASS != stat)
@@ -986,20 +758,16 @@ int main(void)
     		   ;
        }
 
-       stat = xTaskCreate(task_updateTime, "Update products in thingspeak", configMINIMAL_STACK_SIZE + 800, NULL, tskIDLE_PRIORITY + 2, NULL);
+       stat = xTaskCreate(task_updateTime, "Update time", configMINIMAL_STACK_SIZE + 800, NULL, tskIDLE_PRIORITY + 2, NULL);
 
        if (pdPASS != stat)
        {
-    	   PRINTF("Failed to create thingspeak task");
+    	   PRINTF("Failed to create updateTime task");
     	   while (1)
     		   ;
        }
 
-
-
-
-
-    vTaskStartScheduler();
+       vTaskStartScheduler();
 
     for (;;)
     {

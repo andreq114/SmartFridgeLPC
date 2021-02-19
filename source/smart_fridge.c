@@ -26,7 +26,7 @@ uint32_t products_numb = 8;
 
 
 
-
+// Buffers with grouped data for send to ThingSpeak
 char groupedNames[255];
 char groupedBrands[255];
 char groupedDetails[255];
@@ -48,20 +48,18 @@ int PRODUCT_CATEGORY_BLOCK;			//Block 22 for MIFARE 1K Classic, Pages 40-43 for 
 
 
 
-bool ring = false;
-
-bool detected = false;
-
-volatile bool dataUpdateAvailable = false;
+volatile bool thingSpeakUpdateAvailable = false;
+volatile bool flashUpdateAvailable = false;
 volatile bool shopListChanged = false;
+volatile bool flashShopListChanged = false;
 
 volatile int deletePosition;
 
-lv_obj_t *labelek;
 
 char bufferek[4000] = {0};
 char request[2000] = {0};
 
+// Group for send to ThingSpeak
 void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 	memset(groupedNames, 0, 255*sizeof(char));
 	memset(groupedBrands, 0, 255*sizeof(char));
@@ -74,7 +72,7 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 	int j = 0;
 	int k = 0;
 
-	//Dodajemy nazwy produktow do jednej listy
+	//Add names of products to one list
 	for(i=0;i<products_numb;i++){
 		j = 0;
 		while(products[i].productName[j] != '\0'){
@@ -85,11 +83,10 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 		groupedNames[k] = '$';
 		k++;
 	}
-	//groupedNames[k] = '\0';
 	k = 0;
 
 
-	//Dodajemy marki produktow do jednej listy
+	//Add brands of products to one list
 	for(i=0;i<products_numb;i++){
 		j = 0;
 		while(products[i].productBrand[j] != '\0'){
@@ -100,10 +97,9 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 		groupedBrands[k] = '$';
 		k++;
 	}
-	//groupedUid[k] = '\0';
 	k = 0;
 
-	//Dodajemy szczegoly produktow do jednej listy
+	//Add products details to one list
 		for(i=0;i<products_numb;i++){
 			j = 0;
 			while(products[i].productDetails[j] != '\0'){
@@ -114,11 +110,10 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 			groupedDetails[k] = '$';
 			k++;
 		}
-		//groupedNames[k] = '\0';
 		k = 0;
 
 
-		//Dodajemy pojemnosci/wagi produktow do jednej listy
+		//Add capacities of products to one list
 		for(i=0;i<products_numb;i++){
 			j = 0;
 			while(products[i].productCapacity[j] != '\0'){
@@ -129,11 +124,10 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 			groupedCapacity[k] = '$';
 			k++;
 		}
-		//groupedUid[k] = '\0';
 		k = 0;
 
 
-	//Dodajemy daty produktow do jednej listy
+	//Add expiriation dates to one list
 	for(i=0;i<products_numb;i++){
 		j = 0;
 		while(products[i].expirationDate[j] != '\0'){
@@ -144,11 +138,10 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 		groupedDates[k] = '$';
 		k++;
 	}
-	//groupedDates[k] = '\0';
 	k = 0;
 
 
-	//Dodajemy kategorie produktow do jednej listy
+	//Add products categories to one list
 	for(i=0;i<products_numb;i++){
 		j = 0;
 		while(products[i].productCategory[j] != '\0'){
@@ -159,9 +152,10 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 		groupedCategorys[k] = '$';
 		k++;
 	}
-	//groupedCategorys[k] = '\0';
 
 	k=0;
+
+	//Add products from shopping list to one list
 	for(int i=0; shoplist[i][0] != '\0' ; i++)
 	{
 		for(int j = 0; shoplist[i][j] != '\0'; j++){
@@ -174,38 +168,11 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 	k=0;
 
 
-
-
-	/*char tempe[255];
-	sprintf(tempe,"%s",groupedNames);
-	dispPRINTF(tempe,labelek);
-
-	dispPRINTF("\n",labelek);
-	sprintf(tempe,"%s",groupedUid);
-	dispPRINTF(tempe,labelek);
-
-	dispPRINTF("\n",labelek);
-	sprintf(tempe,"%s",groupedDates);
-	dispPRINTF(tempe,labelek);
-
-	dispPRINTF("\n",labelek);
-	sprintf(tempe,"%s",groupedCategorys);
-	dispPRINTF(tempe,labelek);*/
 }
 
 
-void setConsoleLabel(lv_obj_t *label){
-	labelek = label;
-}
-
-void dispPRINTF(const char *text,lv_obj_t *label){
-
-		lv_textarea_add_text(label, text);
-
-}
-
-
-void sendProductsToThinkspeak(char (*shoplist)[SHOPLIST_NAME_SIZE]){
+// Send all products and shop list to ThingSpeak
+void SF_sendProductsToThingSpeak(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 	memset(bufferek, 0, 4000*sizeof(char));
 	memset(request,0,2000*sizeof(char));
 
@@ -220,16 +187,16 @@ void sendProductsToThinkspeak(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 	httpPost(WWW_SERVER,request,bufferek);
 
 
-	dataUpdateAvailable = false;
-	shopListChanged = false;
+	thingSpeakUpdateAvailable = false;
+	flashShopListChanged = false;
 }
 
 
 
 
 
-
-bool detectProduct(){
+// Function called every 500 ms, to check if card is in range and if it is - read data from it
+bool SF_detectProduct(){
 
 	if(!RC522_IsNewCardPresent()){
 		return false;
@@ -246,71 +213,25 @@ bool detectProduct(){
 	}
 
 	if(!readProductsData(current_product_uid)){
-		//dispPRINTFsec("Cos poszlo nie tak\n");
+		return false;
 	}
 
 
-
-	//WYPISANIE W TERMINALU INFORMACJI O OSTATNIO DODANYM PRODUKCIE-----------------------------------------------
-
-	//Po czytaniu z sektorów
 	RC522_Halt();
 	RC522_StopCrypto1();
-	dataUpdateAvailable = true;
-	//tileview_Refresh();
-	//const uint8_t *name = products[0].expirationDate;
-	//dispPRINTF(name,labelek);
-	/*for (uint8_t i = 0; i < products[index-1].size; i++) {
-		dispPRINTF((char)products[index-1].uidByte[i],labelek);
-	}*/
-	//dispPRINTF("\n",labelek);
-	//j = 0;
-
-	//const char *temp = products[0].productCategory;
-	//uint8_t *temp = &products[0].productCategory;
-
-	//lv_textarea_set_text(labelek, "");
-	//char tempe[48];
-	//for(int h=0;h<index;h++){
-		//sprintf(tempe,"%s",products[h].productName);
-		//dispPRINTF(tempe,labelek);
-		//dispPRINTF(",",labelek);
-
-		//sprintf(tempe,"%s",products[h].expirationDate);
-		//dispPRINTF(tempe,labelek);
-		//dispPRINTF(",",labelek);
-
-		//sprintf(tempe,"%s",products[h].productCategory);
-		//dispPRINTF(tempe,labelek);
-		//dispPRINTF("\n",labelek);
-
-
-	//}
-	//sprintf(tempe,"%d",index);
-	//dispPRINTF("Liczba produktow: ",labelek);
-	//dispPRINTF(tempe,labelek);
-	//sendProductsToThinkspeak();
-	//j++;
-	/*
-	dispPRINTF("\n",labelek);
-	j = 0;
-	while(products[index-1].productName[j] != '#'){
-
-		dispPRINTF((char*)products[index-1].productName[j],labelek);
-		j++;
-	}
-	dispPRINTF("\n",labelek);
-	dispPRINTF((char*)products[index-1].productCategory,labelek);*/
-	//dispPRINTF((char*)products[0].productName,labelek);
+	thingSpeakUpdateAvailable = true;
+	flashUpdateAvailable = true;
 	return true;
 
 }
 
-void startRFID_Module(SPI_Type *base,int rstPort,int rstPin){
+// Call at program start, configure RC522 reader
+void SF_startRFID_Module(SPI_Type *base,int rstPort,int rstPin){
     RC522_Init(base,rstPort,rstPin);
     RC522_GetFirmwareVersion();
 }
 
+// Sort products list after delete product
 void sortList(){
 	for(int i=deletePosition;i<products_numb-1;i++){
 		products[i] = products[i+1];
@@ -318,7 +239,7 @@ void sortList(){
 	products_numb--;
 }
 
-
+// Reading from specific pages in which we write data before
 void NTAG215_read_config(){
 	rfid_card = NTAG215;
 	PRODUCT_NAME_BLOCK1 = 8;
@@ -331,7 +252,7 @@ void NTAG215_read_config(){
 	PRODUCT_EXPIRATION_DATE_BLOCK = 36;
 	PRODUCT_CATEGORY_BLOCK = 40;
 }
-
+// Reading from specific blocks in which we write data before
 void MIFARE_read_config(){
 	rfid_card = MIFARE;
 	PRODUCT_NAME_BLOCK1 = 12;
@@ -346,6 +267,7 @@ void MIFARE_read_config(){
 }
 
 
+// Read data from card
 bool readProductsData(Uid productUid){
 	enum StatusCode status;
 
@@ -362,7 +284,7 @@ bool readProductsData(Uid productUid){
 		key.keyByte[i] = 0xFF;
 	}
 	bool isOnList = false;
-	// Sprawdzamy czy produkt jest na liscie porównując UID
+	// Check if product is on list, comparing UID
 	for(int i=0;i<=products_numb;i++){
 		n = 0;
 		for(int j=0;j<productUid.size;j++){
@@ -370,7 +292,7 @@ bool readProductsData(Uid productUid){
 				n++;
 			}
 		}
-		//Jeśli wszystkie bajty w porównywanych się zgadzają,produkt jest już na liście i go usuwamy
+		//If all bytes in compared match - this product is on list and we delete it
 		if(n == productUid.size){
 
 			deletePosition = i;
@@ -408,11 +330,9 @@ bool readProductsData(Uid productUid){
 			GPIO_PinWrite(GPIO,1,22,0);
 		}
 	}
-
+	// If variable isOnList is still false, product isn't on list - we read data from card an add it
 	if(!isOnList){
-		//dispPRINTF("DODAJE\n",labelek);
 		//Reading data from blocks --------------------------------------------------------------------
-		//int byte_num = 0;
 		len = 18;
 		if(rfid_card == NTAG215)
 			RC522_NTAG215_AUTH(PSWBuff,pACK);
@@ -421,13 +341,11 @@ bool readProductsData(Uid productUid){
 		if(rfid_card == MIFARE){
 			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)THIRD_SECTOR_TRAILER, &key, &productUid); //line 834
 			if (status != STATUS_OK) {
-				//dispPRINTFsec("Authentication failed!\n");
 				return false;
 			}
 		}
 		status = RC522_MIFARE_Read(PRODUCT_NAME_BLOCK1, buffer, &len);
 		if (status != STATUS_OK) {
-			//dispPRINTFsec("Reading failed: ");
 			return false;
 		}
 
@@ -437,12 +355,10 @@ bool readProductsData(Uid productUid){
 				if(buffer[k] == '#'){
 					readMore = false;
 					products[products_numb].productName[k] = '\0';
-					//byte_num++;
 				}
 
 				else{
 					products[products_numb].productName[k] = buffer[k];
-					//byte_num++;
 				}
 
 			}
@@ -453,7 +369,6 @@ bool readProductsData(Uid productUid){
 			status = RC522_MIFARE_Read(PRODUCT_NAME_BLOCK2, buffer, &len);
 			if (status != STATUS_OK) {
 				PRINTF("Reading failed: ");
-				//checkStatus(status);
 				return false;
 			}
 
@@ -462,11 +377,9 @@ bool readProductsData(Uid productUid){
 					if(buffer[k] == '#'){
 						readMore = false;
 						products[products_numb].productName[16+k] = '\0';
-						//byte_num++;
 					}
 					else{
 						products[products_numb].productName[16+k] = buffer[k];
-						//byte_num++;
 					}
 
 				}
@@ -480,14 +393,11 @@ bool readProductsData(Uid productUid){
 		if(rfid_card == MIFARE){
 			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FOURTH_SECTOR_TRAILER, &key, &productUid); //line 834
 			if (status != STATUS_OK) {
-				//dispPRINTFsec("Authentication failed!\n");
 				return false;
 			}
 		}
 		status = RC522_MIFARE_Read(PRODUCT_BRAND_BLOCK1, buffer, &len);
 		if (status != STATUS_OK) {
-			//dispPRINTFsec("Reading failed: ");
-
 			return false;
 		}
 
@@ -497,13 +407,10 @@ bool readProductsData(Uid productUid){
 				if(buffer[k] == '#'){
 					readMore = false;
 					products[products_numb].productBrand[k] = '\0';
-					//byte_num++;
 				}
 
 				else{
 					products[products_numb].productBrand[k] = buffer[k];
-					//byte_num++;
-
 				}
 			}
 		}
@@ -512,7 +419,6 @@ bool readProductsData(Uid productUid){
 			status = RC522_MIFARE_Read(PRODUCT_BRAND_BLOCK2, buffer, &len);
 			if (status != STATUS_OK) {
 				PRINTF("Reading failed: ");
-				//checkStatus(status);
 				return false;
 			}
 
@@ -521,11 +427,9 @@ bool readProductsData(Uid productUid){
 					if(buffer[k] == '#'){
 						readMore = false;
 						products[products_numb].productBrand[16+k] = '\0';
-						//byte_num++;
 					}
 					else{
 						products[products_numb].productBrand[16+k] = buffer[k];
-						//byte_num++;
 					}
 
 				}
@@ -538,14 +442,11 @@ bool readProductsData(Uid productUid){
 		if(rfid_card == MIFARE){
 			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FIFTH_SECTOR_TRAILER, &key, &productUid); //line 834
 			if (status != STATUS_OK) {
-				//dispPRINTFsec("Authentication failed!\n");
 				return false;
 			}
 		}
 		status = RC522_MIFARE_Read(PRODUCT_DETAILS_BLOCK1, buffer, &len);
 		if (status != STATUS_OK) {
-			//dispPRINTFsec("Reading failed: ");
-
 			return false;
 		}
 
@@ -555,12 +456,10 @@ bool readProductsData(Uid productUid){
 				if(buffer[k] == '#'){
 					readMore = false;
 					products[products_numb].productDetails[k] = '\0';
-					//byte_num++;
 				}
 
 				else{
 					products[products_numb].productDetails[k] = buffer[k];
-					//byte_num++;
 
 				}
 			}
@@ -570,7 +469,6 @@ bool readProductsData(Uid productUid){
 			status = RC522_MIFARE_Read(PRODUCT_DETAILS_BLOCK2, buffer, &len);
 			if (status != STATUS_OK) {
 				PRINTF("Reading failed: ");
-				//checkStatus(status);
 				return false;
 			}
 
@@ -579,11 +477,9 @@ bool readProductsData(Uid productUid){
 					if(buffer[k] == '#'){
 						readMore = false;
 						products[products_numb].productDetails[16+k] = '\0';
-						//byte_num++;
 					}
 					else{
 						products[products_numb].productDetails[16+k] = buffer[k];
-						//byte_num++;
 					}
 
 				}
@@ -596,15 +492,12 @@ bool readProductsData(Uid productUid){
 		if(rfid_card == MIFARE){
 			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)THIRD_SECTOR_TRAILER, &key, &productUid); //line 834
 			if (status != STATUS_OK) {
-				//dispPRINTFsec("Authentication failed!\n");
 				return false;
 			}
 		}
 		readMore = true;
 		status = RC522_MIFARE_Read(PRODUCT_CAPACITY_BLOCK, buffer, &len);
 		if (status != STATUS_OK) {
-			//dispPRINTFsec("Reading failed: ");
-
 			return false;
 		}
 
@@ -614,13 +507,10 @@ bool readProductsData(Uid productUid){
 				if(buffer[k] == '#'){
 					readMore = false;
 					products[products_numb].productCapacity[k] = '\0';
-					//byte_num++;
 				}
 
 				else{
 					products[products_numb].productCapacity[k] = buffer[k];
-					//byte_num++;
-					//data[index].name[k] = buffer[k];
 				}
 			}
 		}
@@ -630,15 +520,12 @@ bool readProductsData(Uid productUid){
 		if(rfid_card == MIFARE){
 			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FOURTH_SECTOR_TRAILER, &key, &productUid); //line 834
 			if (status != STATUS_OK) {
-				//dispPRINTFsec("Authentication failed!\n");
 				return false;
 			}
 		}
 		readMore = true;
 		status = RC522_MIFARE_Read(PRODUCT_EXPIRATION_DATE_BLOCK, buffer, &len);
 		if (status != STATUS_OK) {
-			//dispPRINTFsec("Reading failed: ");
-
 			return false;
 		}
 
@@ -648,13 +535,10 @@ bool readProductsData(Uid productUid){
 				if(buffer[k] == '#'){
 					readMore = false;
 					products[products_numb].expirationDate[k] = '\0';
-					//byte_num++;
 				}
 
 				else{
 					products[products_numb].expirationDate[k] = buffer[k];
-					//byte_num++;
-					//data[index].name[k] = buffer[k];
 				}
 			}
 		}
@@ -663,15 +547,12 @@ bool readProductsData(Uid productUid){
 		if(rfid_card == MIFARE){
 			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FIFTH_SECTOR_TRAILER, &key, &productUid); //line 834
 			if (status != STATUS_OK) {
-			//	dispPRINTFsec("Authentication failed!\n");
 				return false;
 			}
 		}
 		readMore = true;
 		status = RC522_MIFARE_Read(PRODUCT_CATEGORY_BLOCK, buffer, &len);
 		if (status != STATUS_OK) {
-			//dispPRINTFsec("Reading failed: ");
-
 			return false;
 		}
 
@@ -681,13 +562,10 @@ bool readProductsData(Uid productUid){
 				if(buffer[k] == '#'){
 					readMore = false;
 					products[products_numb].productCategory[k] = '\0';
-					//byte_num++;
 				}
 
 				else{
 					products[products_numb].productCategory[k] = buffer[k];
-					//byte_num++;
-					//data[index].name[k] = buffer[k];
 				}
 			}
 		}
@@ -695,14 +573,13 @@ bool readProductsData(Uid productUid){
 		for(int i=0;i<productUid.size;i++){
 			products[products_numb].uidByte[i] = productUid.uidByte[i];
 		}
-				//Dodajemy dlugosc UID produktu
+
+		//Add UID size
 		products[products_numb].size = productUid.size;
-				//Dodajemy nazwe produktu
 
-				//Dodajemy date waznosci produktu
-
-				//Dodajemy kategorie produktu
 		products_numb++;
+
+		// Buzzer signal for add product
 		GPIO_PinWrite(GPIO,1,22,1);
 		vTaskDelay(MSEC_TO_TICK(50));
 		GPIO_PinWrite(GPIO,1,22,0);
