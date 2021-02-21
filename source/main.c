@@ -32,10 +32,16 @@
 #define TIME_SERVER "showcase.api.linx.twenty57.net"
 
 
-#define SPIFI_DATA_START_ADDRESS 143360
+#define SPIFI_DATA_START_ADDRESS 200704
 #define SPIFI_NUMBER_OF_PRODUCTS_ADDRESS SPIFI_DATA_START_ADDRESS+56001
-#define SPIFI_SHOP_LIST_ADDRESS 225280
-#define SPIFI_NETWORK_DATA_ADDRESS 241664
+#define SPIFI_SHOP_LIST_ADDRESS 266240
+#define SPIFI_NETWORK_DATA_ADDRESS 274432
+
+
+//#define SPIFI_DATA_START_ADDRESS 143360
+//#define SPIFI_NUMBER_OF_PRODUCTS_ADDRESS SPIFI_DATA_START_ADDRESS+56001
+//#define SPIFI_SHOP_LIST_ADDRESS 225280
+//#define SPIFI_NETWORK_DATA_ADDRESS 241664
 
 #define NETWORK_DATA_LENGTH 98
 #define PRODUCTS_DATA_LENGTH_BYTES 3500
@@ -201,30 +207,29 @@ void saveNetworkInFlash(void){
 	check_if_finish();
 
 
-	while (page < (SECTOR_SIZE / PAGE_SIZE))
-	{
-		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NETWORK_DATA_ADDRESS + page * PAGE_SIZE);
-		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
-		for (i = 0; i < PAGE_SIZE; i += 4)
-		{
-			if(k < 4096){
-				for (j = 0; j < 4; j++)
-				{
-					if(k < 4096){
-						data |= ((uint32_t)(*ptr)) << (j * 8);
-						ptr++;
-						k++;
-					}
-				}
 
-				SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
+	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
+	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NETWORK_DATA_ADDRESS + page * PAGE_SIZE);
+	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
+	for (i = 0; i < PAGE_SIZE; i += 4)
+	{
+		for (j = 0; j < 4; j++)
+		{
+			if(k < 98){
+				data |= ((uint32_t)(*ptr)) << (j * 8);
+				ptr++;
+				k++;
+			}else{
 				data = 0;
 			}
 		}
-		page++;
-		check_if_finish();
+
+		SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
+		data = 0;
 	}
+
+	check_if_finish();
+
 
 	/* Reset to memory command mode */
 	SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
@@ -244,7 +249,7 @@ void autoConnectWifi(void){
 	readproducts = &wifi_data.WIFI_SSID[0];
 	for (int i = 0; i < SECTOR_SIZE; i++)	// Odczyta to max. 3 produkty, do odczytania 50 produktow zwiekszyc do 56000
 	{
-		if(i < 98){
+		if(i < SSID_LENGTH+PASSWORD_LENGTH){
 			val = (uint8_t *)(FSL_FEATURE_SPIFI_START_ADDR+SPIFI_NETWORK_DATA_ADDRESS + i);
 			*readproducts = *val;
 			readproducts++;
@@ -449,7 +454,7 @@ void saveDataInFlash(){
 		check_if_finish();
 	}
 
-	vTaskDelay(200);
+	//vTaskDelay(200);
 
 
 
@@ -640,12 +645,14 @@ static void AppTask(void *param)
 
     shoplist = GUI_GetShopList();
 
-    loadDataFromFlashMemory();
-    translateList();
+
 
 #if INITIAL_PRODUCTS == 1
     translateList();
     DATA_DataChanged = true;
+#else
+    loadDataFromFlashMemory();
+    translateList();
 #endif
 
     for (;;)
@@ -674,7 +681,7 @@ static void task_updateTime(void *param){
 
 	number = atoi(timeTable);
 	// Time from this server is 1 hour behind - add one hour
-	number = number + 3600;
+	number = number + 3604;
 	RTC_SecondToDateTime(number,&time_date_struct);
 	RTC_EnableTimer(RTC, false);
 

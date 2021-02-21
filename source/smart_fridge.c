@@ -12,15 +12,41 @@
 Product products[25];
 uint32_t products_numb = 0;
 #else
-Product products[25]={{4,"Mlec","Mleko","Mleczna dolina","Wysoki procent","1l","13.08.2020","00"},
-					  {4,"Mlec","Piwko","Warka","Wysoki procent","1l","13.08.2021","20"},
-					  {4,"Mlec","Serek","Almette","Duzo bialka","200g","13.08.2025","00"},
-					  {4,"Mlec","Mleko","Mleczna dolina","Wysoki procent","1l","13.01.2020","20"},
-					  {4,"Mlec","Mleko","Mleczna dolina","Wysoki procent","1l","13.02.2020","20"},
-					  {4,"Mlec","Mleko","Mleczna dolina","Wysoki procent","1l","12.08.2020","20"},
-					  {4,"Mlec","Mleko","Mleczna dolina","Wysoki procent","1l","15.02.2021","20"},
-					  {4,"Mlec","Mleko","Mleczna dolina","Wysoki procent","1l","13.02.2021","20"}};
-uint32_t products_numb = 8;
+
+
+Product products[25]={
+		{4,"Mlec","Milk","Mlekovita","3.2 percent","1l","25.02.2021","00"},
+		{4,"Mlec","Milk","Mlekovita","3.2 percent","1l","26.02.2021","00"},
+		{4,"Mlec","Milk","Mlekovita","3.2 percent","1l","23.02.2021","00"},
+		{4,"Mlec","Milk","Mleczna dolina","3.2 percent","1l","25.02.2021","00"},
+		{4,"Mleg","Cheese","Swiatowid","","500 g","28.02.2021","00"},
+		{4,"Mleh","Eggs","Ale Jaja","From free range","12 pieces","05.03.2021","00"},
+
+		{4,"Mlea","Beer","Warka","6 percent","0.5l","13.08.2021","20"},
+		{4,"Mleb","Beer","Zatecky","5.5 percent","0.5l","13.02.2021","20"},
+		{4,"Mlem","Vodka","Sobieski","Pure 40 percent","1l","13.02.2022","20"},
+		{4,"Mlem","Vodka","Sobieski","Pure 40 percent","1l","13.02.2022","20"},
+
+		{4,"Mlei","Tomatoes","Some firm","Big ones","8 piece","25.02.2021","80"},
+
+		{4,"Mlej","Pizza","Feliciana","Frozen","2 x 325 g","13.07.2021","70"},
+
+		{4,"Mlek","Tripe","Szubryt","Beef","485 g","23.05.2021","60"},
+		{4,"Mles","Ham","Krakus","Large slices","120 g","19.04.2021","60"},
+		{4,"Mleu","Sausages","Berlinki","With cheese","250 g","13.07.2021","60"},
+
+		{4,"Mlen","Drink","Pepsi","","330 ml","25.07.2022","10"},
+
+		{4,"Mlep","Mustard","Kamis","Sarepska","210 g","20.04.2021","30"},
+
+		{4,"Mler","Roulade","Dan Cake","Strawberry","400 g","13.02.2021","40"},
+
+
+
+		{4,"Mlet","Tuna","Marinero","Pieces in vegetable oil","185 g","03.04.2021","50"},
+
+		{4,"Mlew","Orange juice","Riviva","","1l","13.03.2021","10"}};
+uint32_t products_numb = 20;
 #endif
 
 

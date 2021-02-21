@@ -1,8 +1,8 @@
-smart_fridge.c:63:6:groupProductData	32	static
-smart_fridge.c:175:6:SF_sendProductsToThingSpeak	40	static
-smart_fridge.c:229:6:SF_startRFID_Module	8	static
-smart_fridge.c:235:6:sortList	16	static
-smart_fridge.c:243:6:NTAG215_read_config	0	static
-smart_fridge.c:256:6:MIFARE_read_config	0	static
-smart_fridge.c:271:6:readProductsData	88	static
-smart_fridge.c:199:6:SF_detectProduct	24	static
+smart_fridge.c:89:6:groupProductData	32	static
+smart_fridge.c:201:6:SF_sendProductsToThingSpeak	40	static
+smart_fridge.c:255:6:SF_startRFID_Module	8	static
+smart_fridge.c:261:6:sortList	16	static
+smart_fridge.c:269:6:NTAG215_read_config	0	static
+smart_fridge.c:282:6:MIFARE_read_config	0	static
+smart_fridge.c:297:6:readProductsData	88	static
+smart_fridge.c:225:6:SF_detectProduct	24	static

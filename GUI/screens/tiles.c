@@ -333,6 +333,7 @@ static void setIconBtns(void){
 			GUI_DATA_CATEGORIES cat = i;
 			switch(i)
 			{
+
 			case 0:
 				setIcon(j, cat, align_x, align_y, &dairy);
 				j++;

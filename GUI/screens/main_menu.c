@@ -21,6 +21,9 @@ static lv_obj_t * btn_shop;
 // TASK
 static lv_task_t * time_task;
 
+static bool timeColonShowed = true;
+static int oldMins = 0;
+static int oldHours = 0;
 
 LV_IMG_DECLARE(settings_img)
 LV_IMG_DECLARE(shopcart_img)
@@ -46,9 +49,18 @@ static void refresh_task_handler(lv_task_t * task){
 	struct tm *time;
 	time = localtime(GUI_Date);
 	static char buff[6];
-	sprintf(buff, "%02d:%02d", time->tm_hour, time->tm_min);
+	if(timeColonShowed){
+		sprintf(buff, "%02d %02d", oldHours, oldMins);
+		timeColonShowed = false;
+	}else{
+		sprintf(buff, "%02d:%02d", time->tm_hour, time->tm_min);
+		oldMins = time->tm_min;
+		oldHours = time->tm_hour;
+		timeColonShowed = true;
+	}
 	PRINTF("%s", buff);
 	lv_label_set_text(time_label, buff);
+
 }
 
 static void initTopToolbar(void){
@@ -93,7 +105,7 @@ void MAIN_MENU_Init(void){
 	//
 	initTopToolbar();
 	TILES_Init(screen, title);
-	time_task = lv_task_create(refresh_task_handler, 1000, LV_TASK_PRIO_MID, &GUI_Date);
+	time_task = lv_task_create(refresh_task_handler, 500, LV_TASK_PRIO_MID, &GUI_Date);
 
 #if SHOW_INTRO ==1
 	INTRO_StartIntro();

@@ -8,7 +8,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#define SHOW_INTRO	0
+#define SHOW_INTRO	1
 
 /*
  ************ LANGUAGE

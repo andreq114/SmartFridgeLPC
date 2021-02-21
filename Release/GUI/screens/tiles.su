@@ -2,9 +2,9 @@ tiles.c:309:13:setValidPos	20	static
 tiles.c:125:13:anim_start_shift	24	static
 tiles.c:167:13:table_handler	112	static
 tiles.c:300:13:setIcon	32	static
-tiles.c:381:13:setTileCol	64	static
+tiles.c:382:13:setTileCol	64	static
 tiles.c:63:13:refresh_task_handler	16	static
 tiles.c:84:13:tileview_handler	24	static
 tiles.c:106:13:icon_btn_handler	0	static
 tiles.c:141:13:msgBox_event_handler	16	static
-tiles.c:447:6:TILES_Init	24	static
+tiles.c:448:6:TILES_Init	24	static
