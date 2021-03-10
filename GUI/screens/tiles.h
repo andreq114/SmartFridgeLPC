@@ -25,6 +25,6 @@ typedef struct {
 }tiles_group;
 
 void TILES_Init(lv_obj_t * screen, lv_obj_t * title);
-void TILES_Refresh(void);
+
 
 #endif /* TILES_H_ */

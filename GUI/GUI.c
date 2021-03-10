@@ -13,6 +13,7 @@
 #include "settings.h"
 #include "shoppinglist.h"
 #include "styles.h"
+#include "tiles.h"
 #include "stddef.h"
 
 void GUI_Init(void)
@@ -52,17 +53,27 @@ char	(*GUI_GetShopList())[SHOPLIST_NAME_SIZE]
 	return GUI_ShopList;
 }
 
-void	GUI_SetScanNetworkEvent(scanNetFun fun)
+void	GUI_SetScanNetworkFun(scanNetFun fun)
 {
 	GUI_ScanNetworks = fun;
 }
 
-void	GUI_SetConnectNetworkEvent(connectNetFun fun)
+void	GUI_SetConnectNetworkFun(connectNetFun fun)
 {
 	GUI_ConnectNetwork = fun;
 }
 
-void	GUI_SetDisconnectNetworkEvent(disconnectNetFun fun)
+void	GUI_SetDisconnectNetworkFun(disconnectNetFun fun)
 {
 	GUI_DisconnectNetwork = fun;
+}
+
+void	GUI_SetActualSSID(const char* ssid)
+{
+	GUI_ActualSSID = ssid;
+}
+
+void	GUI_SetBrightnessFun(setBrightnessFun fun)
+{
+	GUI_SetBrightness = fun;
 }

@@ -12,7 +12,9 @@ void 	GUI_SetDataChanged(bool * checker);
 void 	GUI_SetNetworkList(char* * list);
 void	GUI_SetShopListChanged(volatile bool * checker);
 char  	(*GUI_GetShopList(void))[SHOPLIST_NAME_SIZE];
-void	GUI_SetScanNetworkEvent(scanNetFun fun);
-void	GUI_SetConnectNetworkEvent(connectNetFun fun);
-void	GUI_SetDisconnectNetworkEvent(disconnectNetFun fun);
+void	GUI_SetScanNetworkFun(scanNetFun fun);
+void	GUI_SetConnectNetworkFun(connectNetFun fun);
+void	GUI_SetDisconnectNetworkFun(disconnectNetFun fun);
+void	GUI_SetActualSSID(const char* ssid);
+void	GUI_SetBrightnessFun(setBrightnessFun fun);
 #endif

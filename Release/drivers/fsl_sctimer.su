@@ -1,0 +1,14 @@
+fsl_sctimer.c:767:6:SCTIMER_EventHandleIRQ	24	static
+fsl_sctimer.c:105:10:SCTIMER_Init	16	static
+fsl_sctimer.c:165:6:SCTIMER_Deinit	0	static
+fsl_sctimer.c:193:6:SCTIMER_GetDefaultConfig	8	static
+fsl_sctimer.c:404:6:SCTIMER_UpdatePwmDutycycle	16	static
+fsl_sctimer.c:475:10:SCTIMER_CreateAndScheduleEvent	20	static
+fsl_sctimer.c:258:10:SCTIMER_SetupPwm	48	static
+fsl_sctimer.c:599:6:SCTIMER_ScheduleEvent	0	static
+fsl_sctimer.c:617:10:SCTIMER_IncreaseState	0	static
+fsl_sctimer.c:643:10:SCTIMER_GetCurrentState	0	static
+fsl_sctimer.c:657:6:SCTIMER_SetupOutputToggleAction	12	static
+fsl_sctimer.c:687:10:SCTIMER_SetupCaptureAction	20	static
+fsl_sctimer.c:757:6:SCTIMER_SetCallback	0	static
+fsl_sctimer.c:799:6:SCT0_DriverIRQHandler	8	static

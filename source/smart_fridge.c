@@ -24,10 +24,10 @@ Product products[25]={
 
 		{4,"Mlea","Beer","Warka","6 percent","0.5l","13.08.2021","20"},
 		{4,"Mleb","Beer","Zatecky","5.5 percent","0.5l","13.02.2021","20"},
-		{4,"Mlem","Vodka","Sobieski","Pure 40 percent","1l","13.02.2022","20"},
+
 		{4,"Mlem","Vodka","Sobieski","Pure 40 percent","1l","13.02.2022","20"},
 
-		{4,"Mlei","Tomatoes","Some firm","Big ones","8 piece","25.02.2021","80"},
+
 
 		{4,"Mlej","Pizza","Feliciana","Frozen","2 x 325 g","13.07.2021","70"},
 
@@ -39,14 +39,14 @@ Product products[25]={
 
 		{4,"Mlep","Mustard","Kamis","Sarepska","210 g","20.04.2021","30"},
 
-		{4,"Mler","Roulade","Dan Cake","Strawberry","400 g","13.02.2021","40"},
+
 
 
 
 		{4,"Mlet","Tuna","Marinero","Pieces in vegetable oil","185 g","03.04.2021","50"},
 
 		{4,"Mlew","Orange juice","Riviva","","1l","13.03.2021","10"}};
-uint32_t products_numb = 20;
+uint32_t products_numb = 17;
 #endif
 
 
@@ -74,16 +74,16 @@ int PRODUCT_CATEGORY_BLOCK;			//Block 22 for MIFARE 1K Classic, Pages 40-43 for 
 
 
 
-volatile bool thingSpeakUpdateAvailable = false;
+volatile bool thingSpeak_UpdateAvailable = false;
 volatile bool flashUpdateAvailable = false;
 volatile bool shopListChanged = false;
-volatile bool flashShopListChanged = false;
+volatile bool thingSpeak_shopListChanged = false;
 
 volatile int deletePosition;
 
 
-char bufferek[4000] = {0};
-char request[2000] = {0};
+char receiveBuffer[4000] = {0};
+char requestBuffer[2000] = {0};
 
 // Group for send to ThingSpeak
 void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
@@ -199,22 +199,22 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 
 // Send all products and shop list to ThingSpeak
 void SF_sendProductsToThingSpeak(char (*shoplist)[SHOPLIST_NAME_SIZE]){
-	memset(bufferek, 0, 4000*sizeof(char));
-	memset(request,0,2000*sizeof(char));
+	memset(receiveBuffer, 0, 4000*sizeof(char));
+	memset(requestBuffer,0,2000*sizeof(char));
 
 	groupProductData(shoplist);
 
+	sprintf(requestBuffer,"/channels/1242116/feeds.json?api_key=%s",S1_DELETE_API);
+	httpDelete(WWW_SERVER,requestBuffer,receiveBuffer);
+	memset(receiveBuffer, 0, 4000*sizeof(char));
+	memset(requestBuffer,0,2000*sizeof(char));
 
-	sprintf(request,"/update?api_key=4M4LTMQWRYUS085E&field1=%s&field2=%s&field3=%s&field4=%s&field5=%s&field6=%s&field7=%s",groupedNames,groupedBrands,groupedDetails,groupedCapacity,groupedDates,groupedCategorys,groupedShopList);
-
-	httpDelete(WWW_SERVER,"/channels/1242116/feeds.json?api_key=XCILHJ0VPN5BY1X7",bufferek);
-	memset(bufferek, 0, 4000*sizeof(char));
-
-	httpPost(WWW_SERVER,request,bufferek);
+	sprintf(requestBuffer,"/update?api_key=%s&field1=%s&field2=%s&field3=%s&field4=%s&field5=%s&field6=%s&field7=%s",S1_UPDATE_API,groupedNames,groupedBrands,groupedDetails,groupedCapacity,groupedDates,groupedCategorys,groupedShopList);
+	httpPost(WWW_SERVER,requestBuffer,receiveBuffer);
 
 
-	thingSpeakUpdateAvailable = false;
-	flashShopListChanged = false;
+	thingSpeak_UpdateAvailable = false;
+	thingSpeak_shopListChanged = false;
 }
 
 
@@ -223,7 +223,6 @@ void SF_sendProductsToThingSpeak(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 
 // Function called every 500 ms, to check if card is in range and if it is - read data from it
 bool SF_detectProduct(){
-
 	if(!RC522_IsNewCardPresent()){
 		return false;
 	}
@@ -241,11 +240,9 @@ bool SF_detectProduct(){
 	if(!readProductsData(current_product_uid)){
 		return false;
 	}
-
-
 	RC522_Halt();
 	RC522_StopCrypto1();
-	thingSpeakUpdateAvailable = true;
+	thingSpeak_UpdateAvailable = true;
 	flashUpdateAvailable = true;
 	return true;
 

@@ -23,7 +23,7 @@ product: Clocks v7.0
 processor: LPC54628J512
 package_id: LPC54628J512ET180
 mcu_data: ksdk2_0
-processor_version: 9.0.0
+processor_version: 9.0.1
 board: LPCXpresso54628
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
@@ -92,7 +92,7 @@ void BOARD_BootClockFRO12M(void)
 
     /*!< Set up clock selectors - Attach clocks to the peripheries */
     CLOCK_AttachClk(kFRO12M_to_MAIN_CLK);                     /*!< Switch MAIN_CLK to FRO12M */
-    /* Set SystemCoreClock variable. */
+    /*!< Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKFRO12M_CORE_CLOCK;
 }
 
@@ -138,7 +138,7 @@ void BOARD_BootClockFROHF48M(void)
 
     /*!< Set up clock selectors - Attach clocks to the peripheries */
     CLOCK_AttachClk(kFRO_HF_to_MAIN_CLK);                     /*!< Switch MAIN_CLK to FRO_HF */
-    /* Set SystemCoreClock variable. */
+    /*!< Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKFROHF48M_CORE_CLOCK;
 }
 
@@ -186,7 +186,7 @@ void BOARD_BootClockFROHF96M(void)
 
     /*!< Set up clock selectors - Attach clocks to the peripheries */
     CLOCK_AttachClk(kFRO_HF_to_MAIN_CLK);                     /*!< Switch MAIN_CLK to FRO_HF */
-    /* Set SystemCoreClock variable. */
+    /*!< Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKFROHF96M_CORE_CLOCK;
 }
 
@@ -250,7 +250,7 @@ void BOARD_BootClockPLL180M(void)
     /*!< Set up clock selectors - Attach clocks to the peripheries */
     CLOCK_AttachClk(kSYS_PLL_to_MAIN_CLK);                    /*!< Switch MAIN_CLK to SYS_PLL */
     SYSCON->MAINCLKSELA = ((SYSCON->MAINCLKSELA & ~SYSCON_MAINCLKSELA_SEL_MASK) | SYSCON_MAINCLKSELA_SEL(0U)); /*!< Switch MAINCLKSELA to FRO12M even it is not used for MAINCLKSELB */
-    /* Set SystemCoreClock variable. */
+    /*!< Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKPLL180M_CORE_CLOCK;
 }
 
@@ -325,7 +325,7 @@ void BOARD_BootClockPLL220M(void)
     CLOCK_AttachClk(kFRO_HF_to_USB0_CLK);                    /*!< Switch USB0_CLK to FRO_HF */
     CLOCK_AttachClk(kFRO12M_to_FLEXCOMM0);                    /*!< Switch FLEXCOMM0 to FRO12M */
     SYSCON->MAINCLKSELA = ((SYSCON->MAINCLKSELA & ~SYSCON_MAINCLKSELA_SEL_MASK) | SYSCON_MAINCLKSELA_SEL(0U)); /*!< Switch MAINCLKSELA to FRO12M even it is not used for MAINCLKSELB */
-    /* Set SystemCoreClock variable. */
+    /*!< Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKPLL220M_CORE_CLOCK;
 }
 

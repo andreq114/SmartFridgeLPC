@@ -93,7 +93,8 @@
 
 #define WWW_SERVER "api.thingspeak.com"
 
-
+#define S1_UPDATE_API "4M4LTMQWRYUS085E"
+#define S1_DELETE_API "XCILHJ0VPN5BY1X7"
 
 
 
@@ -117,10 +118,10 @@ enum TARGET{
 extern Product products[];
 extern uint32_t products_numb;
 extern bool listChanged;
-extern volatile bool thingSpeakUpdateAvailable;
+extern volatile bool thingSpeak_UpdateAvailable;
 extern volatile bool flashUpdateAvailable;
 extern volatile bool shopListChanged;
-extern volatile bool flashShopListChanged;
+extern volatile bool thingSpeak_shopListChanged;
 
 void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]);
 extern void SF_sendProductsToThingSpeak(char (*shoplist)[SHOPLIST_NAME_SIZE]);

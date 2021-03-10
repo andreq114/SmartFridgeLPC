@@ -1,5 +1,5 @@
-main_menu.c:48:13:refresh_task_handler	24	static
-main_menu.c:42:13:shoplist_btn_event_handler	0	static
-main_menu.c:37:13:settings_btn_event_handler	0	static
+main_menu.c:49:13:refresh_task_handler	24	static
+main_menu.c:43:13:shoplist_btn_event_handler	0	static
+main_menu.c:38:13:settings_btn_event_handler	0	static
 main_menu.c:97:6:MAIN_MENU_Init	32	static
 main_menu.c:117:6:MAIN_MENU_Show	0	static

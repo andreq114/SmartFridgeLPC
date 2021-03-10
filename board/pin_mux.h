@@ -25,61 +25,24 @@ extern "C" {
  */
 void BOARD_InitBootPins(void);
 
-/*!
- * @brief Enables digital function */
-#define IOCON_PIO_DIGITAL_EN 0x0100u
-/*!
- * @brief Selects pin function 0 */
-#define IOCON_PIO_FUNC0 0x00u
-/*!
- * @brief Selects pin function 1 */
-#define IOCON_PIO_FUNC1 0x01u
-/*!
- * @brief Selects pin function 6 */
-#define IOCON_PIO_FUNC6 0x06u
-/*!
- * @brief High drive: 20 mA */
-#define IOCON_PIO_I2CDRIVE_HIGH 0x0400u
-/*!
- * @brief I2C 50 ns glitch filter enabled */
-#define IOCON_PIO_I2CFILTER_EN 0x00u
-/*!
- * @brief I2C mode */
-#define IOCON_PIO_I2CSLEW_I2C 0x00u
-/*!
- * @brief Input filter disabled */
-#define IOCON_PIO_INPFILT_OFF 0x0200u
-/*!
- * @brief Input function is not inverted */
-#define IOCON_PIO_INV_DI 0x00u
-/*!
- * @brief No addition pin function */
-#define IOCON_PIO_MODE_INACT 0x00u
-/*!
- * @brief Selects pull-up function */
-#define IOCON_PIO_MODE_PULLUP 0x20u
-/*!
- * @brief Open drain is disabled */
-#define IOCON_PIO_OPENDRAIN_DI 0x00u
-/*!
- * @brief Fast mode, slew rate control is disabled */
-#define IOCON_PIO_SLEW_FAST 0x0400u
-/*!
- * @brief Standard mode, output slew rate control is enabled */
-#define IOCON_PIO_SLEW_STANDARD 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO122_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO122_FUNC_ALT0 0x00u
-/*!
- * @brief
- * Selects function mode (on-chip pull-up/pull-down resistor control).
- * : Pull-down.
- * Pull-down resistor enabled.
- */
-#define PIO122_MODE_PULL_DOWN 0x01u
+#define IOCON_PIO_DIGITAL_EN 0x0100u    /*!<@brief Enables digital function */
+#define IOCON_PIO_FUNC0 0x00u           /*!<@brief Selects pin function 0 */
+#define IOCON_PIO_FUNC1 0x01u           /*!<@brief Selects pin function 1 */
+#define IOCON_PIO_FUNC6 0x06u           /*!<@brief Selects pin function 6 */
+#define IOCON_PIO_I2CDRIVE_HIGH 0x0400u /*!<@brief High drive: 20 mA */
+#define IOCON_PIO_I2CFILTER_EN 0x00u    /*!<@brief I2C 50 ns glitch filter enabled */
+#define IOCON_PIO_I2CSLEW_I2C 0x00u     /*!<@brief I2C mode */
+#define IOCON_PIO_INPFILT_OFF 0x0200u   /*!<@brief Input filter disabled */
+#define IOCON_PIO_INV_DI 0x00u          /*!<@brief Input function is not inverted */
+#define IOCON_PIO_MODE_INACT 0x00u      /*!<@brief No addition pin function */
+#define IOCON_PIO_MODE_PULLUP 0x20u     /*!<@brief Selects pull-up function */
+#define IOCON_PIO_OPENDRAIN_DI 0x00u    /*!<@brief Open drain is disabled */
+#define IOCON_PIO_SLEW_FAST 0x0400u     /*!<@brief Fast mode, slew rate control is disabled */
+#define IOCON_PIO_SLEW_STANDARD 0x00u   /*!<@brief Standard mode, output slew rate control is enabled */
+#define PIO310_DIGIMODE_DIGITAL 0x01u   /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO310_FUNC_ALT1 0x01u          /*!<@brief Selects pin function.: Alternative connection 1. */
+#define PIO331_DIGIMODE_DIGITAL 0x01u   /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO331_FUNC_ALT2 0x02u          /*!<@brief Selects pin function.: Alternative connection 2. */
 
 /*! @name PIO0_7 (coord H12), U28[D9]/RP5[3]/P0_7-EMC_D5
   @{ */
@@ -479,17 +442,6 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_FC2_SCLX_PIN 24U                   /*!<@brief PORT pin number */
 #define BOARD_INITPINS_FC2_SCLX_PIN_MASK (1U << 24U)      /*!<@brief PORT pin mask */
                                                           /* @} */
-
-/*! @name PIO1_22 (coord P11), J13[1]/P1_22-CT2MAT3
-  @{ */
-
-/* Symbols to be used with GPIO driver */
-#define BOARD_INITPINS_BUZZ_GPIO GPIO                 /*!<@brief GPIO peripheral base pointer */
-#define BOARD_INITPINS_BUZZ_GPIO_PIN_MASK (1U << 22U) /*!<@brief GPIO pin mask */
-#define BOARD_INITPINS_BUZZ_PORT 1U                   /*!<@brief PORT peripheral base pointer */
-#define BOARD_INITPINS_BUZZ_PIN 22U                   /*!<@brief PORT pin number */
-#define BOARD_INITPINS_BUZZ_PIN_MASK (1U << 22U)      /*!<@brief PORT pin mask */
-                                                      /* @} */
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.

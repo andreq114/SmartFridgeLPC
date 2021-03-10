@@ -1,6 +1,7 @@
 
 #include "main_menu.h"
 #include "fsl_debug_console.h"
+#include "GUI_IntData.h"
 #include "tiles.h"
 #include "intro.h"
 #include "settings.h"
@@ -58,7 +59,6 @@ static void refresh_task_handler(lv_task_t * task){
 		oldHours = time->tm_hour;
 		timeColonShowed = true;
 	}
-	PRINTF("%s", buff);
 	lv_label_set_text(time_label, buff);
 
 }
@@ -105,7 +105,7 @@ void MAIN_MENU_Init(void){
 	//
 	initTopToolbar();
 	TILES_Init(screen, title);
-	time_task = lv_task_create(refresh_task_handler, 500, LV_TASK_PRIO_MID, &GUI_Date);
+	time_task = lv_task_create(refresh_task_handler, 500, LV_TASK_PRIO_MID, NULL);
 
 #if SHOW_INTRO ==1
 	INTRO_StartIntro();

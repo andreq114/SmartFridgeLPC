@@ -27,6 +27,7 @@
 #include "GUI_ExtData.h"
 #include <fsl_rtc.h>
 #include "fsl_spifi.h"
+#include "fsl_sctimer.h"
 
 
 #define TIME_SERVER "showcase.api.linx.twenty57.net"
@@ -60,7 +61,6 @@ TaskHandle_t task_main_task_handler;
 TaskHandle_t task_disp_task_handler;
 
 
-
 #define SSID_LENGTH 33
 #define PASSWORD_LENGTH 65
 typedef struct{
@@ -83,10 +83,29 @@ WLAN_CRYPT_TYPE g_cipher = WLAN_CRYPT_AES_CRYPT;
 extern int numIrqs;
 extern int initTime;
 
-lv_obj_t *label3;
+// PWM Event
+uint32_t event;
+uint32_t event2;
+
 int licznik = 0;
 
-
+//
+/////////////////////////////////////////////////////////////////////////////////
+//#define NOTE_C4  26  //Defining note frequency
+//#define NOTE_D4  29
+//#define NOTE_E4  33
+//#define NOTE_F4  34
+//#define NOTE_G4  39
+//#define NOTE_A4  44
+//#define NOTE_B4  49
+//#define NOTE_C5  52
+//#define NOTE_D5  58
+//#define NOTE_E5  65
+//#define NOTE_F5  69
+//#define NOTE_G5  78
+//#define NOTE_A5  88
+//#define NOTE_B5  98
+///////////////////////////////////////////////////////////////////////////////////
 enum STATE
 {
     STATE_IDLE,
@@ -107,6 +126,48 @@ spifi_command_t command[COMMAND_NUM] = {
 		{0, false, kSPIFI_DataOutput, 0, kSPIFI_CommandAllSerial, kSPIFI_CommandOpcodeOnly, 0x06},
 		{1, false, kSPIFI_DataOutput, 0, kSPIFI_CommandAllSerial, kSPIFI_CommandOpcodeOnly, 0x31}};
 
+void BOARD_InitPWM(void)
+{
+	sctimer_config_t config;
+	sctimer_pwm_signal_param_t pwmParam;
+	CLOCK_AttachClk(kMAIN_CLK_to_SCT_CLK);
+	CLOCK_SetClkDiv(kCLOCK_DivSctClk, 2, true);
+	SCTIMER_GetDefaultConfig(&config);
+	SCTIMER_Init(SCT0, &config);
+	pwmParam.output = kSCTIMER_Out_5;
+	pwmParam.level = kSCTIMER_HighTrue;
+	pwmParam.dutyCyclePercent = 20;
+	SCTIMER_SetupPwm(SCT0, &pwmParam, kSCTIMER_CenterAlignedPwm, 1000U, CLOCK_GetFreq(kCLOCK_BusClk), &event);
+//	//SCTIMER_StartTimer(SCT0, kSCTIMER_Counter_L);
+//
+//	pwmParam.output = kSCTIMER_Out_3;
+//	pwmParam.level = kSCTIMER_HighTrue;
+//	pwmParam.dutyCyclePercent = 50;
+//	SCTIMER_SetupPwm(SCT0, &pwmParam, kSCTIMER_CenterAlignedPwm, 6000U, CLOCK_GetFreq(kCLOCK_BusClk), &event2);
+	SCTIMER_StartTimer(SCT0, kSCTIMER_Counter_L);
+}
+
+void dimmScreen(uint8_t value){
+	SCTIMER_UpdatePwmDutycycle(SCT0, 5, value*0.59, event);
+}
+//int duration[] = {         //duration of each note (in ms) Quarter Note is set to 250 ms
+//		250, 125, 250, 125, 250, 125, 750, 400, 500,
+//		1500,
+//		250, 125, 250, 125, 250, 125, 750, 400, 500,
+//		1500,
+//		250, 125, 250, 125, 250, 125, 750, 400, 500
+//};
+//
+//void song(){
+//	for (int i=0;i<29;i++){              //203 is the total number of music notes in the song
+//	  if(i%2 == 0)
+//		  SCTIMER_UpdatePwmDutycycle(SCT0, 3, 80, event2);
+//	  else
+//		  SCTIMER_UpdatePwmDutycycle(SCT0, 3, 0, event2);
+//	  vTaskDelay(duration[i]);
+//	}                        //delay is used so it doesn't go to the next loop before tone is finished playing
+//	SCTIMER_UpdatePwmDutycycle(SCT0, 3, 0, event2);
+//}
 
 void check_if_finish();
 void saveNetworkInFlash(void);
@@ -174,6 +235,7 @@ void disconnectWifi(void){
 		GPIO_PinWrite(GPIO,1,22,1);
 		vTaskDelay(MSEC_TO_TICK(900));
 		GPIO_PinWrite(GPIO,1,22,0);
+		GUI_SetActualSSID("");
 		apDisconnect();
 	}else{
 		GPIO_PinWrite(GPIO,1,22,1);
@@ -257,7 +319,10 @@ void autoConnectWifi(void){
 		}
 	}
 
-	connectWiF(wifi_data.WIFI_SSID,wifi_data.WIFI_PASSWORD);
+	if(connectWiF(wifi_data.WIFI_SSID,wifi_data.WIFI_PASSWORD))
+		GUI_SetActualSSID(wifi_data.WIFI_SSID);
+	else
+		GUI_SetActualSSID("");
 
 }
 
@@ -448,7 +513,6 @@ void saveDataInFlash(){
 				SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
 				data = 0;
 			}
-
 		}
 		page++;
 		check_if_finish();
@@ -473,8 +537,6 @@ void saveDataInFlash(){
 	for (i = 0; i < PAGE_SIZE; i += 4)
 	{
 		if(i == 0){
-
-
 			SPIFI_WriteData(BOARD_FLASH_SPIFI, products_numb);
 
 		}else{
@@ -566,28 +628,12 @@ static void scanNetworks(){
 	apScan(DATA_Networks);
 }
 
+
+
+// WiFi task
 // This task is checking every 20 s that is there any change in products/shopping list - if
 // there is then save products list and shopping list in SPIFI and if we are connected
 // to wifi send it to ThingSpeak server
-void task_sendProductsToThingspeak(void *param){
-	while(1){
-		if(flashUpdateAvailable || shopListChanged){
-			flashShopListChanged = shopListChanged;
-			saveDataInFlash();
-		}
-
-		if(thingSpeakUpdateAvailable || flashShopListChanged){
-
-			if(isConnected() && state == STATE_CONNECTED){
-				SF_sendProductsToThingSpeak(shoplist);
-			}
-		}
-
-		vTaskDelay(MSEC_TO_TICK(20000));
-	}
-}
-
-// WiFi task
 void task_main(void *param)
 {
     int32_t result = 0;
@@ -614,7 +660,19 @@ void task_main(void *param)
 
     while (1)
     {
-    	vTaskDelay(MSEC_TO_TICK(50));
+    	if(flashUpdateAvailable || shopListChanged){
+    		thingSpeak_shopListChanged = shopListChanged;
+    		saveDataInFlash();
+    	}
+
+    	if(thingSpeak_UpdateAvailable || thingSpeak_shopListChanged){
+
+    		if(isConnected() && state == STATE_CONNECTED){
+    			SF_sendProductsToThingSpeak(shoplist);
+    		}
+    	}
+
+    	vTaskDelay(MSEC_TO_TICK(20000));
     }
 }
 
@@ -639,13 +697,11 @@ static void AppTask(void *param)
     GUI_SetNetworkList(DATA_Networks);
 
     // WIFI Events
-    GUI_SetScanNetworkEvent(scanNetworks);
-    GUI_SetConnectNetworkEvent(connectWiF);
-    GUI_SetDisconnectNetworkEvent(disconnectWifi);
-
+    GUI_SetScanNetworkFun(scanNetworks);
+    GUI_SetConnectNetworkFun(connectWiF);
+    GUI_SetDisconnectNetworkFun(disconnectWifi);
+    GUI_SetBrightnessFun(dimmScreen);
     shoplist = GUI_GetShopList();
-
-
 
 #if INITIAL_PRODUCTS == 1
     translateList();
@@ -653,7 +709,10 @@ static void AppTask(void *param)
 #else
     loadDataFromFlashMemory();
     translateList();
+    DATA_DataChanged = true;
 #endif
+
+
 
     for (;;)
     {
@@ -667,6 +726,7 @@ static void task_updateTime(void *param){
 	while(state != STATE_CONNECTED){
 		vTaskDelay(MSEC_TO_TICK(1000));
 	}
+
 	char timeBuff[500];
 	char timeTable[30];
 	uint32_t number;
@@ -690,6 +750,8 @@ static void task_updateTime(void *param){
 
 	/* Start the RTC time counter */
 	RTC_EnableTimer(RTC, true);
+	DATA_Date = RTC_GetSecondFromRTC(RTC);
+	DATA_DataChanged = true;
 	while(1){
 		DATA_Date = RTC_GetSecondFromRTC(RTC);
 		vTaskDelay(MSEC_TO_TICK(1000));
@@ -701,12 +763,16 @@ static void task_updateTime(void *param){
 static void RFID_Task(void *param){
 
 	SF_startRFID_Module(EXAMPLE_SPI_MASTER,4,7);	//Init RC522, reset
+	//song();
 	while (1)
 	{
 		if(SF_detectProduct()){
 			translateList();
 			DATA_DataChanged = true;
+			for(int i=0;i<1000000;i++);
+
 		}
+
 		vTaskDelay(MSEC_TO_TICK(460));
 
 	}
@@ -722,6 +788,7 @@ int main(void)
        BOARD_InitBootClocks();
        BOARD_InitSDRAM();
        BOARD_InitPeripherals();
+       BOARD_InitPWM();
        SYSCON->RTCOSCCTRL |= SYSCON_RTCOSCCTRL_EN_MASK;
 
        RTC_Init(RTC);
@@ -747,7 +814,7 @@ int main(void)
     		   ;
        }
 
-       stat = xTaskCreate(RFID_Task, "RFID Detector", configMINIMAL_STACK_SIZE + 800, NULL, tskIDLE_PRIORITY + 2, NULL);
+       stat = xTaskCreate(RFID_Task, "RFID Detector", configMINIMAL_STACK_SIZE + 1000, NULL, tskIDLE_PRIORITY + 2, NULL);
 
        if (pdPASS != stat)
        {
@@ -756,14 +823,6 @@ int main(void)
     		   ;
        }
 
-       stat = xTaskCreate(task_sendProductsToThingspeak, "Update products in thingspeak", configMINIMAL_STACK_SIZE + 800, NULL, tskIDLE_PRIORITY + 2, NULL);
-
-       if (pdPASS != stat)
-       {
-    	   PRINTF("Failed to create thingspeak task");
-    	   while (1)
-    		   ;
-       }
 
        stat = xTaskCreate(task_updateTime, "Update time", configMINIMAL_STACK_SIZE + 800, NULL, tskIDLE_PRIORITY + 2, NULL);
 

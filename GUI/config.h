@@ -9,7 +9,7 @@
 #define CONFIG_H_
 
 #define SHOW_INTRO	1
-
+#define DEFAULT_TERM_RANGE 7
 /*
  ************ LANGUAGE
  */

@@ -5,8 +5,8 @@ littlevgl/lv_examples/src/lv_demo_widgets/lv_demo_widgets.o \
  ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/lvgl.h \
  ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/src/lv_misc/lv_log.h \
  ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/src/lv_misc/../lv_conf_internal.h \
- C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\NTAG\OM13098_Smart_Fridge\source/lv_conf.h \
- C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\NTAG\OM13098_Smart_Fridge\board/littlevgl_support.h \
+ C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\release\OM13098_Smart_Fridge\source/lv_conf.h \
+ C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\release\OM13098_Smart_Fridge\board/littlevgl_support.h \
  ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/src/lv_misc/lv_task.h \
  ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/src/lv_misc/lv_mem.h \
  ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/src/lv_misc/lv_log.h \
@@ -156,7 +156,7 @@ littlevgl/lv_examples/src/lv_demo_widgets/lv_demo_widgets.o \
  ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/src/lv_draw/lv_img_decoder.h \
  ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/src/lv_api_map.h \
  ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/src/../lvgl.h \
- C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\NTAG\OM13098_Smart_Fridge\source/lv_ex_conf.h \
+ C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\release\OM13098_Smart_Fridge\source/lv_ex_conf.h \
  ../littlevgl/lv_examples/src/lv_demo_widgets/../../src/lv_demo_widgets/lv_demo_widgets.h \
  ../littlevgl/lv_examples/src/lv_demo_widgets/lv_demo_widgets.h
 
@@ -168,9 +168,9 @@ littlevgl/lv_examples/src/lv_demo_widgets/lv_demo_widgets.o \
 
 ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/src/lv_misc/../lv_conf_internal.h:
 
-C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\NTAG\OM13098_Smart_Fridge\source/lv_conf.h:
+C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\release\OM13098_Smart_Fridge\source/lv_conf.h:
 
-C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\NTAG\OM13098_Smart_Fridge\board/littlevgl_support.h:
+C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\release\OM13098_Smart_Fridge\board/littlevgl_support.h:
 
 ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/src/lv_misc/lv_task.h:
 
@@ -470,7 +470,7 @@ C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\NTAG\OM13098_Smart_Fridge\boa
 
 ../littlevgl/lv_examples/src/lv_demo_widgets/../../../lvgl/src/../lvgl.h:
 
-C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\NTAG\OM13098_Smart_Fridge\source/lv_ex_conf.h:
+C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\release\OM13098_Smart_Fridge\source/lv_ex_conf.h:
 
 ../littlevgl/lv_examples/src/lv_demo_widgets/../../src/lv_demo_widgets/lv_demo_widgets.h:
 

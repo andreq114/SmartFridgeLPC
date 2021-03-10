@@ -107,7 +107,6 @@ static void setList(void){
 	lv_list_clean(list);
 	for(int i = 0; GUI_ShopList[i][0] != '\0' ; i++)
 	{
-		PRINTF("Show:%s\r\n", GUI_ShopList[i]);
 		list_btn = lv_list_add_btn(list, NULL, GUI_ShopList[i]);
 		lv_obj_set_event_cb(list_btn, list_btn_evt_handler);
 		lv_obj_add_style(list_btn, LV_BTN_PART_MAIN, &style_font20);
@@ -153,7 +152,7 @@ void SHOPLIST_Init(void){
 	lv_page_set_scrlbar_mode(list, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_add_style(list, LV_BTN_PART_MAIN, &style_borders);
 
-	//GUI_ShopList[0][0] = '\0';
+	GUI_ShopList[0][0] = '\0';
 }
 
 void SHOPLIST_Show(lv_obj_t * previous_screen){
