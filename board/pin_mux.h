@@ -39,8 +39,8 @@ void BOARD_InitBootPins(void);
 #define IOCON_PIO_OPENDRAIN_DI 0x00u    /*!<@brief Open drain is disabled */
 #define IOCON_PIO_SLEW_FAST 0x0400u     /*!<@brief Fast mode, slew rate control is disabled */
 #define IOCON_PIO_SLEW_STANDARD 0x00u   /*!<@brief Standard mode, output slew rate control is enabled */
-#define PIO310_DIGIMODE_DIGITAL 0x01u   /*!<@brief Select Analog/Digital mode.: Digital mode. */
-#define PIO310_FUNC_ALT1 0x01u          /*!<@brief Selects pin function.: Alternative connection 1. */
+#define PIO122_DIGIMODE_DIGITAL 0x01u   /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO122_FUNC_ALT0 0x00u          /*!<@brief Selects pin function.: Alternative connection 0. */
 #define PIO331_DIGIMODE_DIGITAL 0x01u   /*!<@brief Select Analog/Digital mode.: Digital mode. */
 #define PIO331_FUNC_ALT2 0x02u          /*!<@brief Selects pin function.: Alternative connection 2. */
 
@@ -442,6 +442,17 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_FC2_SCLX_PIN 24U                   /*!<@brief PORT pin number */
 #define BOARD_INITPINS_FC2_SCLX_PIN_MASK (1U << 24U)      /*!<@brief PORT pin mask */
                                                           /* @} */
+
+/*! @name PIO1_22 (coord P11), J13[1]/P1_22-CT2MAT3
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_BUZZ_GPIO GPIO                 /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_BUZZ_GPIO_PIN_MASK (1U << 22U) /*!<@brief GPIO pin mask */
+#define BOARD_INITPINS_BUZZ_PORT 1U                   /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_BUZZ_PIN 22U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_BUZZ_PIN_MASK (1U << 22U)      /*!<@brief PORT pin mask */
+                                                      /* @} */
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.

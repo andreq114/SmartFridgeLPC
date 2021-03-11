@@ -1,4 +1,4 @@
-settings.c:325:13:setNetworks	24	static
+settings.c:325:13:setNetworks	32	static
 settings.c:138:13:msgBox_event_handler	8	static
 settings.c:71:13:btn_img_return_evt_handler	16	static
 settings.c:125:13:btn_disconnect_event_cb	16	static

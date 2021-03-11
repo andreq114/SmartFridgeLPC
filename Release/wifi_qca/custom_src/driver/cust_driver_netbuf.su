@@ -1,13 +1,13 @@
 cust_driver_netbuf.c:244:6:default_native_free_fn	8	static
-cust_driver_netbuf.c:260:7:a_netbuf_dequeue_adv	16	static
-cust_driver_netbuf.c:325:6:a_netbuf_init	0	static
+cust_driver_netbuf.c:260:7:a_netbuf_dequeue_adv	12	static
+cust_driver_netbuf.c:325:6:a_netbuf_init	4	static
 cust_driver_netbuf.c:339:7:a_netbuf_alloc	16	static
 cust_driver_netbuf.c:387:7:a_netbuf_reinit	8	static
 cust_driver_netbuf.c:409:6:a_netbuf_set_rx_pool	0	static
 cust_driver_netbuf.c:415:6:a_netbuf_set_tx_pool	0	static
 cust_driver_netbuf.c:424:7:a_netbuf_alloc_raw	16	static
 cust_driver_netbuf.c:507:6:a_netbuf_free_tx_pool	0	static
-cust_driver_netbuf.c:513:10:a_netbuf_to_len	8	static
+cust_driver_netbuf.c:513:10:a_netbuf_to_len	0	static
 cust_driver_netbuf.c:547:7:a_netbuf_get_fragment	0	static
 cust_driver_netbuf.c:578:6:a_netbuf_append_fragment	0	static
 cust_driver_netbuf.c:598:6:a_netbuf_enqueue	16	static

@@ -2,13 +2,13 @@ fsl_lcdc.c:187:10:LCDC_Init	24	static
 fsl_lcdc.c:264:6:LCDC_Deinit	0	static
 fsl_lcdc.c:300:6:LCDC_GetDefaultConfig	8	static
 fsl_lcdc.c:333:6:LCDC_SetPanelAddr	0	static
-fsl_lcdc.c:356:6:LCDC_SetPalette	12	static
+fsl_lcdc.c:356:6:LCDC_SetPalette	8	static
 fsl_lcdc.c:381:6:LCDC_EnableInterrupts	0	static
 fsl_lcdc.c:411:6:LCDC_DisableInterrupts	0	static
 fsl_lcdc.c:452:10:LCDC_GetInterruptsPendingStatus	0	static
 fsl_lcdc.c:472:10:LCDC_GetEnabledInterruptsPendingStatus	0	static
 fsl_lcdc.c:495:6:LCDC_ClearInterruptsStatus	0	static
+fsl_lcdc.c:549:6:LCDC_SetCursorConfig	16	static
 fsl_lcdc.c:608:6:LCDC_CursorGetDefaultConfig	8	static
-fsl_lcdc.c:641:6:LCDC_SetCursorPosition	8	static
-fsl_lcdc.c:695:6:LCDC_SetCursorImage	16	static
-fsl_lcdc.c:549:6:LCDC_SetCursorConfig	24	static
+fsl_lcdc.c:641:6:LCDC_SetCursorPosition	4	static
+fsl_lcdc.c:695:6:LCDC_SetCursorImage	8	static

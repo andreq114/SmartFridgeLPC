@@ -127,11 +127,15 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]);
 extern void SF_sendProductsToThingSpeak(char (*shoplist)[SHOPLIST_NAME_SIZE]);
 
 void SF_startRFID_Module(SPI_Type *base,int rstPort,int rstPin);
-
-bool SF_detectProduct();
-void sortList();
-void NTAG215_read_config();
-void MIFARE_read_config();
+void networkConnectedSignal(void);
+void networkDisconnectSignal(void);
+void addProductSignal(void);
+void removeProductSignal(void);
+void wifiModuleInitSignal(void);
+bool SF_detectProduct(void);
+void sortList(void);
+void NTAG215_read_config(void);
+void MIFARE_read_config(void);
 bool readProductsData(Uid product_uid);
 
 #endif /* SMART_FRIDGE_H_ */

@@ -1,6 +1,6 @@
-api_txrx.c:48:17:query_credit_deficit	24	static
+api_txrx.c:48:17:query_credit_deficit	16	static
 api_txrx.c:79:10:Api_TxGetStatus	24	static
 api_txrx.c:121:6:Api_TxComplete	16	static
-api_txrx.c:148:6:Api_RxComplete	40	static
-api_txrx.c:317:1:Api_WmiTxStart	32	static
-api_txrx.c:346:1:Api_DataTxStart	56	static
+api_txrx.c:148:6:Api_RxComplete	32	static
+api_txrx.c:317:1:Api_WmiTxStart	8	static
+api_txrx.c:346:1:Api_DataTxStart	40	static

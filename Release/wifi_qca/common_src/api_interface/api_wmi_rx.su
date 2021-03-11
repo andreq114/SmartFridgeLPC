@@ -8,7 +8,7 @@ api_wmi_rx.c:165:6:Api_BssInfoEvent	0	static
 api_wmi_rx.c:179:6:Api_TkipMicErrorEvent	16	static
 api_wmi_rx.c:213:6:Api_GetPmkEvent	24	static
 api_wmi_rx.c:239:6:Api_ConnectEvent	104	static
-api_wmi_rx.c:335:6:Api_DisconnectEvent	72	static
+api_wmi_rx.c:335:6:Api_DisconnectEvent	80	static
 api_wmi_rx.c:405:6:Api_HostDsetStoreEvent	24	static
 api_wmi_rx.c:457:6:Api_HostDsetCreateEvent	16	static
 api_wmi_rx.c:495:6:Api_HostDsetWriteEvent	16	static
@@ -29,6 +29,7 @@ api_wmi_rx.c:1103:6:Api_GetTemperatureReply	0	static
 api_wmi_rx.c:1119:6:Api_GetWpsInitReply	0	static
 api_wmi_rx.c:1136:6:Api_GetCountryCodeReply	8	static
 api_wmi_rx.c:1149:6:Api_GetSetParamReply	0	static
+api_wmi_rx.c:1236:6:Api_TestCmdEventRx	16	static
 api_wmi_rx.c:1250:6:Api_RxDbglogEvent	0	static
 api_wmi_rx.c:1259:6:Api_RxGpioDataEvent	0	static
 api_wmi_rx.c:1268:6:Api_RxHBChallengeEvent	0	static
@@ -55,5 +56,4 @@ api_wmi_rx.c:1228:6:p2p_invite_rcvd_result_ev	0	static
 api_wmi_rx.c:1561:6:Api_p2p_invite_send_result	32	static
 api_wmi_rx.c:1171:6:p2p_invite_sent_result_event	0	static
 api_wmi_rx.c:1585:6:Api_Test_Cmd_Event	16	static
-api_wmi_rx.c:1236:6:Api_TestCmdEventRx	16	static
 api_wmi_rx.c:1593:6:Api_ProbeReqEvent	0	static

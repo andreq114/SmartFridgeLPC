@@ -11,5 +11,5 @@ wifi_env.c:126:10:a_event_clear	8	static
 wifi_env.c:142:10:a_event_set	16	static
 wifi_env.c:162:10:a_event_wait	24	static
 wifi_env.c:196:10:a_time_get_msec	8	static
-wifi_env.c:218:6:a_enter_critical	0	static
+wifi_env.c:218:6:a_enter_critical	4	static
 wifi_env.c:240:6:a_exit_critical	0	static

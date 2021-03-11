@@ -1,9 +1,8 @@
 lv_calendar.c:1029:16:get_month_length	0	static
-lv_calendar.c:1062:16:get_day_of_week.constprop	0	static
-lv_calendar.c:644:19:get_header_height	16	static
 lv_calendar.c:658:19:get_day_names_height	16	static
-lv_calendar.c:386:24:lv_calendar_design	328	static
-lv_calendar.c:416:17:lv_calendar_signal	72	static
+lv_calendar.c:644:19:get_header_height	16	static
+lv_calendar.c:386:24:lv_calendar_design	320	static
+lv_calendar.c:416:17:lv_calendar_signal	64	static
 lv_calendar.c:79:12:lv_calendar_create	24	static
 lv_calendar.c:183:6:lv_calendar_set_today_date	16	static
 lv_calendar.c:202:6:lv_calendar_set_showed_date	16	static

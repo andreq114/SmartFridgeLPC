@@ -1,5 +1,5 @@
-cust_api_wmi_rx.c:135:13:fill_ext_scan_info	64	static
-cust_api_wmi_rx.c:52:13:fill_scan_info	64	static
+cust_api_wmi_rx.c:135:13:fill_ext_scan_info	72	static
+cust_api_wmi_rx.c:52:13:fill_scan_info	72	static
 cust_api_wmi_rx.c:219:6:Custom_Api_BssInfoEvent	56	static
 cust_api_wmi_rx.c:310:6:Custom_Api_ConnectEvent	24	static
 cust_api_wmi_rx.c:338:6:Custom_Api_DisconnectEvent	40	static

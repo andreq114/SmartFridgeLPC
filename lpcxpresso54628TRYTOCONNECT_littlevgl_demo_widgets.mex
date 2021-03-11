@@ -69,6 +69,11 @@
                         <data>true</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.lpc_gpio" description="Pins initialization requires the LPC_GPIO Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
+                     <feature name="enabled" evaluation="equal" configuration="core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
                   <dependency resourceType="SWComponent" resourceId="platform.drivers.lpc_iocon" description="Pins initialization requires the LPC_IOCON Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
                      <feature name="enabled" evaluation="equal" configuration="core0">
                         <data>true</data>
@@ -643,7 +648,11 @@
                      </pin_features>
                   </pin>
                   <pin peripheral="SCT0" signal="OUT, 5" pin_num="J14" pin_signal="PIO3_31/FC9_RTS_SCL_SSEL1/SCT0_OUT5/CTIMER4_MAT2/SCT0_GPI0/EMC_A(20)"/>
-                  <pin peripheral="SCT0" signal="OUT, 3" pin_num="A3" pin_signal="PIO3_10/SCT0_OUT3/CTIMER3_MAT0/EMC_DYCSN(1)/TRACEDATA(0)"/>
+                  <pin peripheral="GPIO" signal="PIO1, 22" pin_num="P11" pin_signal="PIO1_22/FC8_RTS_SCL_SSEL1/SD_CMD/CTIMER2_MAT3/SCT0_GPI5/FC4_SSEL3/EMC_CKE(1)">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
             <function name="BOARD_InitWiFi10ClickShield">

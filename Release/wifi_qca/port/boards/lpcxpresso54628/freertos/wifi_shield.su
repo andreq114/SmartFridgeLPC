@@ -1,4 +1,4 @@
-wifi_shield.c:25:10:WIFISHIELD_Init	16	static
+wifi_shield.c:25:10:WIFISHIELD_Init	24	static
 wifi_shield.c:73:10:WIFISHIELD_InitDrivers	88	static
 wifi_shield.c:124:10:WIFISHIELD_DeinitDrivers	0	static
 wifi_shield.c:133:10:WIFISHIELD_PowerUp	0	static

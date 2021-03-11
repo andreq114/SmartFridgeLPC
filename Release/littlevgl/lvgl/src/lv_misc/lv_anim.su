@@ -1,6 +1,6 @@
 lv_anim.c:225:17:lv_anim_path_linear	0	static
 lv_anim.c:538:13:anim_mark_list_change	8	static
-lv_anim.c:429:13:anim_task	88	static
+lv_anim.c:429:13:anim_task	96	static
 lv_anim.c:61:6:_lv_anim_core_init	8	static
 lv_anim.c:79:6:lv_anim_init	8	static
 lv_anim.c:132:6:lv_anim_del	32	static

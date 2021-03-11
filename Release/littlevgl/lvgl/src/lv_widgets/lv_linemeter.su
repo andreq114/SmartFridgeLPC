@@ -12,5 +12,5 @@ lv_linemeter.c:335:10:lv_linemeter_get_line_count	8	static
 lv_linemeter.c:348:10:lv_linemeter_get_scale_angle	8	static
 lv_linemeter.c:361:10:lv_linemeter_get_angle_offset	8	static
 lv_linemeter.c:373:6:lv_linemeter_get_mirror	8	static
-lv_linemeter.c:380:6:lv_linemeter_draw_scale	168	static
+lv_linemeter.c:380:6:lv_linemeter_draw_scale	176	static
 lv_linemeter.c:585:24:lv_linemeter_design	104	static

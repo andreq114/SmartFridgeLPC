@@ -1,5 +1,1 @@
-lv_obj_style_dec.h:123:1:lv_style_set_bg_color	16	static
-lv_obj_style_dec.h:130:1:lv_style_set_border_color	16	static
-lv_obj_style_dec.h:164:1:lv_style_set_text_color	16	static
-lv_obj_style_dec.h:167:1:lv_style_set_text_font	24	static
 styles.c:19:6:STYLES_Init	24	static

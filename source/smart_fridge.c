@@ -219,10 +219,64 @@ void SF_sendProductsToThingSpeak(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 
 
 
+// Signal for adding product to list
+void addProductSignal(void){
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(50));
+	GPIO_PinWrite(GPIO,1,22,0);
+	vTaskDelay(MSEC_TO_TICK(50));
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(50));
+	GPIO_PinWrite(GPIO,1,22,0);
+	vTaskDelay(MSEC_TO_TICK(50));
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(50));
+	GPIO_PinWrite(GPIO,1,22,0);
+}
+
+void removeProductSignal(void){
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(75));
+	GPIO_PinWrite(GPIO,1,22,0);
+	vTaskDelay(MSEC_TO_TICK(100));
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(200));
+	GPIO_PinWrite(GPIO,1,22,0);
+}
+
+void networkConnectedSignal(void){
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(200));
+	GPIO_PinWrite(GPIO,1,22,0);
+	vTaskDelay(MSEC_TO_TICK(200));
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(200));
+	GPIO_PinWrite(GPIO,1,22,0);
+	vTaskDelay(MSEC_TO_TICK(200));
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(400));
+	GPIO_PinWrite(GPIO,1,22,0);
+}
+
+void networkDisconnectSignal(void){
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(300));
+	GPIO_PinWrite(GPIO,1,22,0);
+	vTaskDelay(MSEC_TO_TICK(300));
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(900));
+	GPIO_PinWrite(GPIO,1,22,0);
+}
+
+void wifiModuleInitSignal(void){
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(500));
+	GPIO_PinWrite(GPIO,1,22,0);
+}
 
 
 // Function called every 500 ms, to check if card is in range and if it is - read data from it
-bool SF_detectProduct(){
+bool SF_detectProduct(void){
 	if(!RC522_IsNewCardPresent()){
 		return false;
 	}
@@ -255,7 +309,7 @@ void SF_startRFID_Module(SPI_Type *base,int rstPort,int rstPin){
 }
 
 // Sort products list after delete product
-void sortList(){
+void sortList(void){
 	for(int i=deletePosition;i<products_numb-1;i++){
 		products[i] = products[i+1];
 	}
@@ -263,7 +317,7 @@ void sortList(){
 }
 
 // Reading from specific pages in which we write data before
-void NTAG215_read_config(){
+void NTAG215_read_config(void){
 	rfid_card = NTAG215;
 	PRODUCT_NAME_BLOCK1 = 8;
 	PRODUCT_NAME_BLOCK2 = 12;
@@ -276,7 +330,7 @@ void NTAG215_read_config(){
 	PRODUCT_CATEGORY_BLOCK = 40;
 }
 // Reading from specific blocks in which we write data before
-void MIFARE_read_config(){
+void MIFARE_read_config(void){
 	rfid_card = MIFARE;
 	PRODUCT_NAME_BLOCK1 = 12;
 	PRODUCT_NAME_BLOCK2 = 13;
@@ -344,13 +398,9 @@ bool readProductsData(Uid productUid){
 			sortList();
 
 			isOnList = true;
-			GPIO_PinWrite(GPIO,1,22,1);
-			vTaskDelay(MSEC_TO_TICK(75));
-			GPIO_PinWrite(GPIO,1,22,0);
-			vTaskDelay(MSEC_TO_TICK(100));
-			GPIO_PinWrite(GPIO,1,22,1);
-			vTaskDelay(MSEC_TO_TICK(200));
-			GPIO_PinWrite(GPIO,1,22,0);
+
+			// Buzzer signal for remove product from list
+			removeProductSignal();
 		}
 	}
 	// If variable isOnList is still false, product isn't on list - we read data from card an add it
@@ -603,17 +653,7 @@ bool readProductsData(Uid productUid){
 		products_numb++;
 
 		// Buzzer signal for add product
-		GPIO_PinWrite(GPIO,1,22,1);
-		vTaskDelay(MSEC_TO_TICK(50));
-		GPIO_PinWrite(GPIO,1,22,0);
-		vTaskDelay(MSEC_TO_TICK(50));
-		GPIO_PinWrite(GPIO,1,22,1);
-		vTaskDelay(MSEC_TO_TICK(50));
-		GPIO_PinWrite(GPIO,1,22,0);
-		vTaskDelay(MSEC_TO_TICK(50));
-		GPIO_PinWrite(GPIO,1,22,1);
-		vTaskDelay(MSEC_TO_TICK(50));
-		GPIO_PinWrite(GPIO,1,22,0);
+		addProductSignal();
 
 	}
 

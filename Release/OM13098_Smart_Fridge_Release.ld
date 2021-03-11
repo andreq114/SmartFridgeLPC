@@ -6,7 +6,7 @@
  * Generated linker script file for LPC54628J512
  * Created from linkscript.ldt by FMCreateLinkLibraries
  * Using Freemarker v2.3.30
- * MCUXpresso IDE v11.3.0 [Build 5222] [2021-01-11] on 2021-03-10 23:38:52
+ * MCUXpresso IDE v11.3.0 [Build 5222] [2021-01-11] on 2021-03-11 20:15:09
  */
 
 INCLUDE "OM13098_Smart_Fridge_Release_library.ld"

@@ -4,8 +4,8 @@ littlevgl/lvgl/src/lv_widgets/lv_objx_templ.o \
  ../littlevgl/lvgl/src/lv_widgets/../lv_core/lv_debug.h \
  ../littlevgl/lvgl/src/lv_widgets/../lv_core/lv_obj.h \
  ../littlevgl/lvgl/src/lv_widgets/../lv_core/../lv_conf_internal.h \
- C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\NTAG\OM13098_Smart_Fridge\source/lv_conf.h \
- C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\NTAG\OM13098_Smart_Fridge\board/littlevgl_support.h \
+ C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\release\OM13098_Smart_Fridge\source/lv_conf.h \
+ C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\release\OM13098_Smart_Fridge\board/littlevgl_support.h \
  ../littlevgl/lvgl/src/lv_widgets/../lv_core/lv_style.h \
  ../littlevgl/lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h \
  ../littlevgl/lvgl/src/lv_widgets/../lv_core/../lv_font/../lv_conf_internal.h \
@@ -62,9 +62,9 @@ littlevgl/lvgl/src/lv_widgets/lv_objx_templ.o \
 
 ../littlevgl/lvgl/src/lv_widgets/../lv_core/../lv_conf_internal.h:
 
-C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\NTAG\OM13098_Smart_Fridge\source/lv_conf.h:
+C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\release\OM13098_Smart_Fridge\source/lv_conf.h:
 
-C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\NTAG\OM13098_Smart_Fridge\board/littlevgl_support.h:
+C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\release\OM13098_Smart_Fridge\board/littlevgl_support.h:
 
 ../littlevgl/lvgl/src/lv_widgets/../lv_core/lv_style.h:
 

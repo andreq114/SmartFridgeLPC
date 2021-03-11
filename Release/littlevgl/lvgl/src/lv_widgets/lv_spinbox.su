@@ -1,7 +1,7 @@
 lv_spinbox.c:522:13:lv_spinbox_updatevalue	120	static
 lv_spinbox.c:128:6:lv_spinbox_set_rollover	8	static
 lv_spinbox.c:142:6:lv_spinbox_set_value	16	static
-lv_spinbox.c:164:6:lv_spinbox_set_digit_format	48	static
+lv_spinbox.c:164:6:lv_spinbox_set_digit_format	40	static
 lv_spinbox.c:193:6:lv_spinbox_set_step	8	static
 lv_spinbox.c:209:6:lv_spinbox_set_range	24	static
 lv_spinbox.c:53:12:lv_spinbox_create	24	static

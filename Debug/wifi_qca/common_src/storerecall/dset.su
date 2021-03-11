@@ -1,8 +1,8 @@
-dset.c:34:12:dset_find	24	static
-dset.c:48:12:dset_insert	24	static
-dset.c:71:12:dset_get	24	static
-dset.c:106:10:dset_write	32	static
-dset.c:120:10:dset_read	32	static
-dset.c:134:10:dset_fill	32	static
-dset.c:156:12:dset_get_first	16	static
-dset.c:173:12:dset_get_next	16	static
+dset.c:34:12:dset_find	0	static
+dset.c:48:12:dset_insert	16	static
+dset.c:71:12:dset_get	16	static
+dset.c:106:10:dset_write	16	static
+dset.c:120:10:dset_read	16	static
+dset.c:134:10:dset_fill	12	static
+dset.c:156:12:dset_get_first	0	static
+dset.c:173:12:dset_get_next	0	static

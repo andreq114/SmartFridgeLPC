@@ -1,6 +1,6 @@
-rcv_aggr.c:47:6:aggr_deinit	16	static
-rcv_aggr.c:60:7:aggr_init	8	static
-rcv_aggr.c:79:6:aggr_recv_addba_req_evt	24	static
-rcv_aggr.c:99:6:aggr_recv_delba_req_evt	24	static
-rcv_aggr.c:119:6:aggr_reset_state	24	static
-rcv_aggr.c:147:9:aggr_process_recv_frm	32	static
+rcv_aggr.c:47:6:aggr_deinit	0	static
+rcv_aggr.c:60:7:aggr_init	0	static
+rcv_aggr.c:79:6:aggr_recv_addba_req_evt	8	static
+rcv_aggr.c:99:6:aggr_recv_delba_req_evt	8	static
+rcv_aggr.c:119:6:aggr_reset_state	8	static
+rcv_aggr.c:147:9:aggr_process_recv_frm	8	static

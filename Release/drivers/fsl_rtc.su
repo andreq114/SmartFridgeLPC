@@ -1,4 +1,4 @@
-fsl_rtc.c:59:13:RTC_CheckDatetimeFormat	32	static
+fsl_rtc.c:59:13:RTC_CheckDatetimeFormat	24	static
 fsl_rtc.c:91:17:RTC_ConvertDatetimeToSeconds	48	static
 fsl_rtc.c:121:13:RTC_ConvertSecondsToDatetime	40	static
 fsl_rtc.c:200:6:RTC_Init	0	static

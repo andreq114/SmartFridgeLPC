@@ -179,7 +179,7 @@ BOARD_InitPins:
   - {pin_num: H14, peripheral: GPIO, signal: 'PIO2, 27', pin_signal: PIO2_27/LCD_VD(9)/FC9_SCK/FC3_SSEL2, mode: pullUp, invert: disabled, glitch_filter: disabled,
     slew_rate: standard, open_drain: disabled}
   - {pin_num: J14, peripheral: SCT0, signal: 'OUT, 5', pin_signal: PIO3_31/FC9_RTS_SCL_SSEL1/SCT0_OUT5/CTIMER4_MAT2/SCT0_GPI0/EMC_A(20)}
-  - {pin_num: A3, peripheral: SCT0, signal: 'OUT, 3', pin_signal: PIO3_10/SCT0_OUT3/CTIMER3_MAT0/EMC_DYCSN(1)/TRACEDATA(0)}
+  - {pin_num: P11, peripheral: GPIO, signal: 'PIO1, 22', pin_signal: PIO1_22/FC8_RTS_SCL_SSEL1/SD_CMD/CTIMER2_MAT3/SCT0_GPI5/FC4_SSEL3/EMC_CKE(1), direction: OUTPUT}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -195,6 +195,15 @@ void BOARD_InitPins(void)
 {
     /* Enables the clock for the IOCON block. 0 = Disable; 1 = Enable.: 0x01u */
     CLOCK_EnableClock(kCLOCK_Iocon);
+    /* Enables the clock for the GPIO1 module */
+    CLOCK_EnableClock(kCLOCK_Gpio1);
+
+    gpio_pin_config_t BUZZ_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO1_22 (pin P11)  */
+    GPIO_PinInit(BOARD_INITPINS_BUZZ_GPIO, BOARD_INITPINS_BUZZ_PORT, BOARD_INITPINS_BUZZ_PIN, &BUZZ_config);
 
     const uint32_t EMC_WEn = (/* Pin is configured as EMC_WEN */
                               IOCON_PIO_FUNC6 |
@@ -584,6 +593,18 @@ void BOARD_InitPins(void)
                               IOCON_PIO_OPENDRAIN_DI);
     /* PORT1 PIN21 (coords: N8) is configured as EMC_D(10) */
     IOCON_PinMuxSet(IOCON, BOARD_INITPINS_EMC_D10_PORT, BOARD_INITPINS_EMC_D10_PIN, EMC_D10);
+
+    IOCON->PIO[1][22] = ((IOCON->PIO[1][22] &
+                          /* Mask bits to zero which are setting */
+                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                         /* Selects pin function.
+                          * : PORT122 (pin P11) is configured as PIO1_22. */
+                         | IOCON_PIO_FUNC(PIO122_FUNC_ALT0)
+
+                         /* Select Analog/Digital mode.
+                          * : Digital mode. */
+                         | IOCON_PIO_DIGIMODE(PIO122_DIGIMODE_DIGITAL));
 
     const uint32_t EMC_A11 = (/* Pin is configured as EMC_A(11) */
                               IOCON_PIO_FUNC6 |
@@ -1128,18 +1149,6 @@ void BOARD_InitPins(void)
                                IOCON_PIO_OPENDRAIN_DI);
     /* PORT3 PIN1 (coords: D11) is configured as LCD_VD(15) */
     IOCON_PinMuxSet(IOCON, BOARD_INITPINS_LCD_VD15_PORT, BOARD_INITPINS_LCD_VD15_PIN, LCD_VD15);
-
-    IOCON->PIO[3][10] = ((IOCON->PIO[3][10] &
-                          /* Mask bits to zero which are setting */
-                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
-
-                         /* Selects pin function.
-                          * : PORT310 (pin A3) is configured as SCT0_OUT3. */
-                         | IOCON_PIO_FUNC(PIO310_FUNC_ALT1)
-
-                         /* Select Analog/Digital mode.
-                          * : Digital mode. */
-                         | IOCON_PIO_DIGIMODE(PIO310_DIGIMODE_DIGITAL));
 
     const uint32_t FC2_SDAX = (/* Pin is configured as FC2_CTS_SDA_SSEL0 */
                                IOCON_PIO_FUNC1 |

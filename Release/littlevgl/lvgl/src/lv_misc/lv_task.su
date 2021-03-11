@@ -5,7 +5,7 @@ lv_task.c:287:6:lv_task_del	16	static
 lv_task.c:390:13:lv_task_exec	16	static
 lv_task.c:70:36:lv_task_handler	48	static
 lv_task.c:302:6:lv_task_set_prio	16	static
-lv_task.c:259:13:lv_task_create	32	static
+lv_task.c:259:13:lv_task_create	24	static
 lv_task.c:329:6:lv_task_set_period	0	static
 lv_task.c:338:6:lv_task_ready	8	static
 lv_task.c:348:6:lv_task_set_repeat_count	0	static

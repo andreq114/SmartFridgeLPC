@@ -1,11 +1,11 @@
 lv_refr.c:654:13:lv_refr_vdb_flush	16	static
 lv_refr.c:498:19:lv_refr_get_top_obj	24	static
-lv_refr.c:578:13:lv_refr_obj	64	static
+lv_refr.c:578:13:lv_refr_obj.part.0	64	static
 lv_refr.c:534:13:lv_refr_obj_and_children	24	static
-lv_refr.c:456:13:lv_refr_area_part	24	static
+lv_refr.c:456:13:lv_refr_area_part	32	static
 lv_refr.c:68:6:_lv_refr_init	0	static
 lv_refr.c:105:6:_lv_inv_area	40	static
 lv_refr.c:154:13:_lv_refr_get_disp_refreshing	0	static
 lv_refr.c:165:6:_lv_refr_set_disp_refreshing	0	static
-lv_refr.c:174:6:_lv_disp_refr_task	80	static
+lv_refr.c:174:6:_lv_disp_refr_task	72	static
 lv_refr.c:80:6:lv_refr_now	8	static

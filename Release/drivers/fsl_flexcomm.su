@@ -1,6 +1,6 @@
 fsl_flexcomm.c:92:10:FLEXCOMM_GetInstance	0	static
 fsl_flexcomm.c:140:10:FLEXCOMM_Init	16	static
-fsl_flexcomm.c:160:6:FLEXCOMM_SetIRQHandler	16	static
+fsl_flexcomm.c:160:6:FLEXCOMM_SetIRQHandler	8	static
 fsl_flexcomm.c:176:6:FLEXCOMM0_DriverIRQHandler	8	static
 fsl_flexcomm.c:185:6:FLEXCOMM1_DriverIRQHandler	8	static
 fsl_flexcomm.c:194:6:FLEXCOMM2_DriverIRQHandler	8	static

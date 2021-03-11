@@ -1,5 +1,5 @@
+lv_gauge.c:414:24:lv_gauge_design	240	static
 lv_gauge.c:450:17:lv_gauge_signal	24	static
-lv_gauge.c:414:24:lv_gauge_design	232	static
 lv_gauge.c:145:6:lv_gauge_set_needle_count	24	static
 lv_gauge.c:180:6:lv_gauge_set_value	80	static
 lv_gauge.c:261:6:lv_gauge_set_scale	16	static

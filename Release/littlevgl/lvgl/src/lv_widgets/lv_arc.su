@@ -1,6 +1,6 @@
-lv_arc.c:465:17:lv_arc_signal	24	static
 lv_arc.c:516:13:inv_arc_area	72	static
 lv_arc.c:401:24:lv_arc_design	160	static
+lv_arc.c:465:17:lv_arc_signal	24	static
 lv_arc.c:54:12:lv_arc_create	24	static
 lv_arc.c:129:6:lv_arc_set_start_angle	16	static
 lv_arc.c:162:6:lv_arc_set_end_angle	16	static

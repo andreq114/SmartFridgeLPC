@@ -1,5 +1,5 @@
-pin_mux.c:194:6:BOARD_InitPins	8	static
-pin_mux.c:1318:6:BOARD_InitWiFi10ClickShield	32	static
-pin_mux.c:1467:6:BOARD_InitRC522Module	16	static
-pin_mux.c:1565:6:BOARD_InitSPIFI	0	static
+pin_mux.c:194:6:BOARD_InitPins	24	static
+pin_mux.c:1327:6:BOARD_InitWiFi10ClickShield	32	static
+pin_mux.c:1476:6:BOARD_InitRC522Module	16	static
+pin_mux.c:1574:6:BOARD_InitSPIFI	0	static
 pin_mux.c:41:6:BOARD_InitBootPins	8	static

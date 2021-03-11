@@ -1,4 +1,4 @@
-htc.c:165:13:Htc_DistributeCredits	0	static
+htc.c:165:13:Htc_DistributeCredits	4	static
 htc.c:44:6:Htc_PrepareRecvPacket	16	static
 htc.c:75:6:Htc_RxComplete	8	static
 htc.c:87:10:Htc_ReadCreditCounter	104	static

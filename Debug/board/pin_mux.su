@@ -1,7 +1,5 @@
-fsl_clock.h:698:20:CLOCK_EnableClock	24	static
-fsl_iocon.h:255:22:IOCON_PinMuxSet	24	static
+pin_mux.c:194:6:BOARD_InitPins	16	static
+pin_mux.c:1327:6:BOARD_InitWiFi10ClickShield	32	static
+pin_mux.c:1476:6:BOARD_InitRC522Module	16	static
+pin_mux.c:1574:6:BOARD_InitSPIFI	0	static
 pin_mux.c:41:6:BOARD_InitBootPins	8	static
-pin_mux.c:194:6:BOARD_InitPins	264	static
-pin_mux.c:1320:6:BOARD_InitWiFi10ClickShield	24	static
-pin_mux.c:1469:6:BOARD_InitRC522Module	16	static
-pin_mux.c:1567:6:BOARD_InitSPIFI	8	static

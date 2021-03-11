@@ -1,10 +1,10 @@
 bmi.c:59:17:bmiBufferSend	112	static
-bmi.c:116:17:bmiBufferReceive	120	static
+bmi.c:116:17:bmiBufferReceive	128	static
 bmi.c:174:1:BMIInit	8	static
 bmi.c:202:6:BMICleanup	8	static
 bmi.c:218:1:BMIDone	24	static
 bmi.c:253:1:BMIGetTargetInfo	32	static
-bmi.c:313:1:BMIReadMemory	40	static
+bmi.c:313:1:BMIReadMemory	48	static
 bmi.c:366:1:BMIWriteMemory	56	static
 bmi.c:429:1:BMIExecute	40	static
 bmi.c:470:1:BMIReadSOCRegister	32	static
