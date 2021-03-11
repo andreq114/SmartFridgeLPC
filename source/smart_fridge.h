@@ -24,6 +24,8 @@
 #define INITIAL_PRODUCTS 0  // If we want to have some products on start
 
 
+
+
 // -------------------------------------- MIFARE 1k BLOCKS ------------------------------
 // SECTOR ------- BLOCK ------- DATA
 // 	 3	  -------  12   ------- PRODUCT_NAME_FIRST_16_BYTES
@@ -97,6 +99,9 @@
 #define S1_DELETE_API "XCILHJ0VPN5BY1X7"
 
 
+#define ONE_PRODUCT_SIZE 140
+#define MAX_NUMBER_OF_PRODUCTS 20
+
 
 typedef struct {
 	uint8_t size; 					// Number of bytes in the UID. 4, 7 or 10.
@@ -131,6 +136,7 @@ void networkConnectedSignal(void);
 void networkDisconnectSignal(void);
 void addProductSignal(void);
 void removeProductSignal(void);
+void fullProductsListSignal(void);
 void wifiModuleInitSignal(void);
 bool SF_detectProduct(void);
 void sortList(void);

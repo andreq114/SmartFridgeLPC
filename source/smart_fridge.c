@@ -9,12 +9,12 @@
 
 
 #if INITIAL_PRODUCTS == 0
-Product products[25];
+Product products[MAX_NUMBER_OF_PRODUCTS];
 uint32_t products_numb = 0;
 #else
 
 
-Product products[25]={
+Product products[MAX_NUMBER_OF_PRODUCTS]={
 		{4,"Mlec","Milk","Mlekovita","3.2 percent","1l","25.02.2021","00"},
 		{4,"Mlec","Milk","Mlekovita","3.2 percent","1l","26.02.2021","00"},
 		{4,"Mlec","Milk","Mlekovita","3.2 percent","1l","23.02.2021","00"},
@@ -45,8 +45,9 @@ Product products[25]={
 
 		{4,"Mlet","Tuna","Marinero","Pieces in vegetable oil","185 g","03.04.2021","50"},
 
-		{4,"Mlew","Orange juice","Riviva","","1l","13.03.2021","10"}};
-uint32_t products_numb = 17;
+		{4,"Mlew","Orange juice","Riviva","","1l","13.03.2021","10"},
+		{4,"Mkek","Orange juice","Riviva","","1l","13.03.2021","10"}};
+uint32_t products_numb = 18;
 #endif
 
 
@@ -218,6 +219,11 @@ void SF_sendProductsToThingSpeak(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 }
 
 
+void fullProductsListSignal(void){
+	GPIO_PinWrite(GPIO,1,22,1);
+	vTaskDelay(MSEC_TO_TICK(1000));
+	GPIO_PinWrite(GPIO,1,22,0);
+}
 
 // Signal for adding product to list
 void addProductSignal(void){
@@ -234,6 +240,7 @@ void addProductSignal(void){
 	GPIO_PinWrite(GPIO,1,22,0);
 }
 
+//Signal for removing product from list
 void removeProductSignal(void){
 	GPIO_PinWrite(GPIO,1,22,1);
 	vTaskDelay(MSEC_TO_TICK(75));
@@ -243,6 +250,7 @@ void removeProductSignal(void){
 	vTaskDelay(MSEC_TO_TICK(200));
 	GPIO_PinWrite(GPIO,1,22,0);
 }
+
 
 void networkConnectedSignal(void){
 	GPIO_PinWrite(GPIO,1,22,1);
@@ -405,256 +413,259 @@ bool readProductsData(Uid productUid){
 	}
 	// If variable isOnList is still false, product isn't on list - we read data from card an add it
 	if(!isOnList){
-		//Reading data from blocks --------------------------------------------------------------------
-		len = 18;
-		if(rfid_card == NTAG215)
-			RC522_NTAG215_AUTH(PSWBuff,pACK);
+		if(products_numb < MAX_NUMBER_OF_PRODUCTS){
+			//Reading data from blocks --------------------------------------------------------------------
+			len = 18;
+			if(rfid_card == NTAG215)
+				RC522_NTAG215_AUTH(PSWBuff,pACK);
 
-		// ----------------------------------- READ PRODUCT NAME ----------------------------
-		if(rfid_card == MIFARE){
-			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)THIRD_SECTOR_TRAILER, &key, &productUid); //line 834
+			// ----------------------------------- READ PRODUCT NAME ----------------------------
+			if(rfid_card == MIFARE){
+				status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)THIRD_SECTOR_TRAILER, &key, &productUid); //line 834
+				if (status != STATUS_OK) {
+					return false;
+				}
+			}
+			status = RC522_MIFARE_Read(PRODUCT_NAME_BLOCK1, buffer, &len);
 			if (status != STATUS_OK) {
 				return false;
 			}
-		}
-		status = RC522_MIFARE_Read(PRODUCT_NAME_BLOCK1, buffer, &len);
-		if (status != STATUS_OK) {
-			return false;
-		}
 
-
-		for(int k=0;k<16;k++){
-			if(readMore){
-				if(buffer[k] == '#'){
-					readMore = false;
-					products[products_numb].productName[k] = '\0';
-				}
-
-				else{
-					products[products_numb].productName[k] = buffer[k];
-				}
-
-			}
-
-		}
-
-		if(readMore){
-			status = RC522_MIFARE_Read(PRODUCT_NAME_BLOCK2, buffer, &len);
-			if (status != STATUS_OK) {
-				PRINTF("Reading failed: ");
-				return false;
-			}
 
 			for(int k=0;k<16;k++){
 				if(readMore){
 					if(buffer[k] == '#'){
 						readMore = false;
-						products[products_numb].productName[16+k] = '\0';
+						products[products_numb].productName[k] = '\0';
 					}
+
 					else{
-						products[products_numb].productName[16+k] = buffer[k];
+						products[products_numb].productName[k] = buffer[k];
 					}
 
 				}
 
 			}
 
-		}
-
-		// --------------------------------- READ BRAND -------------------------------------
-		readMore = true;
-		if(rfid_card == MIFARE){
-			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FOURTH_SECTOR_TRAILER, &key, &productUid); //line 834
-			if (status != STATUS_OK) {
-				return false;
-			}
-		}
-		status = RC522_MIFARE_Read(PRODUCT_BRAND_BLOCK1, buffer, &len);
-		if (status != STATUS_OK) {
-			return false;
-		}
-
-
-		for(int k=0;k<16;k++){
 			if(readMore){
-				if(buffer[k] == '#'){
-					readMore = false;
-					products[products_numb].productBrand[k] = '\0';
+				status = RC522_MIFARE_Read(PRODUCT_NAME_BLOCK2, buffer, &len);
+				if (status != STATUS_OK) {
+					PRINTF("Reading failed: ");
+					return false;
 				}
 
-				else{
-					products[products_numb].productBrand[k] = buffer[k];
+				for(int k=0;k<16;k++){
+					if(readMore){
+						if(buffer[k] == '#'){
+							readMore = false;
+							products[products_numb].productName[16+k] = '\0';
+						}
+						else{
+							products[products_numb].productName[16+k] = buffer[k];
+						}
+
+					}
+
+				}
+
+			}
+
+			// --------------------------------- READ BRAND -------------------------------------
+			readMore = true;
+			if(rfid_card == MIFARE){
+				status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FOURTH_SECTOR_TRAILER, &key, &productUid); //line 834
+				if (status != STATUS_OK) {
+					return false;
 				}
 			}
-		}
-
-		if(readMore){
-			status = RC522_MIFARE_Read(PRODUCT_BRAND_BLOCK2, buffer, &len);
+			status = RC522_MIFARE_Read(PRODUCT_BRAND_BLOCK1, buffer, &len);
 			if (status != STATUS_OK) {
-				PRINTF("Reading failed: ");
 				return false;
 			}
+
 
 			for(int k=0;k<16;k++){
 				if(readMore){
 					if(buffer[k] == '#'){
 						readMore = false;
-						products[products_numb].productBrand[16+k] = '\0';
+						products[products_numb].productBrand[k] = '\0';
 					}
+
 					else{
-						products[products_numb].productBrand[16+k] = buffer[k];
+						products[products_numb].productBrand[k] = buffer[k];
+					}
+				}
+			}
+
+			if(readMore){
+				status = RC522_MIFARE_Read(PRODUCT_BRAND_BLOCK2, buffer, &len);
+				if (status != STATUS_OK) {
+					PRINTF("Reading failed: ");
+					return false;
+				}
+
+				for(int k=0;k<16;k++){
+					if(readMore){
+						if(buffer[k] == '#'){
+							readMore = false;
+							products[products_numb].productBrand[16+k] = '\0';
+						}
+						else{
+							products[products_numb].productBrand[16+k] = buffer[k];
+						}
+
 					}
 
 				}
 
 			}
-
-		}
-		// ---------------------- READ DETAILS -------------------------------------
-		readMore = true;
-		if(rfid_card == MIFARE){
-			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FIFTH_SECTOR_TRAILER, &key, &productUid); //line 834
+			// ---------------------- READ DETAILS -------------------------------------
+			readMore = true;
+			if(rfid_card == MIFARE){
+				status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FIFTH_SECTOR_TRAILER, &key, &productUid); //line 834
+				if (status != STATUS_OK) {
+					return false;
+				}
+			}
+			status = RC522_MIFARE_Read(PRODUCT_DETAILS_BLOCK1, buffer, &len);
 			if (status != STATUS_OK) {
 				return false;
 			}
-		}
-		status = RC522_MIFARE_Read(PRODUCT_DETAILS_BLOCK1, buffer, &len);
-		if (status != STATUS_OK) {
-			return false;
-		}
 
-
-		for(int k=0;k<16;k++){
-			if(readMore){
-				if(buffer[k] == '#'){
-					readMore = false;
-					products[products_numb].productDetails[k] = '\0';
-				}
-
-				else{
-					products[products_numb].productDetails[k] = buffer[k];
-
-				}
-			}
-		}
-
-		if(readMore){
-			status = RC522_MIFARE_Read(PRODUCT_DETAILS_BLOCK2, buffer, &len);
-			if (status != STATUS_OK) {
-				PRINTF("Reading failed: ");
-				return false;
-			}
 
 			for(int k=0;k<16;k++){
 				if(readMore){
 					if(buffer[k] == '#'){
 						readMore = false;
-						products[products_numb].productDetails[16+k] = '\0';
+						products[products_numb].productDetails[k] = '\0';
 					}
+
 					else{
-						products[products_numb].productDetails[16+k] = buffer[k];
+						products[products_numb].productDetails[k] = buffer[k];
+
+					}
+				}
+			}
+
+			if(readMore){
+				status = RC522_MIFARE_Read(PRODUCT_DETAILS_BLOCK2, buffer, &len);
+				if (status != STATUS_OK) {
+					PRINTF("Reading failed: ");
+					return false;
+				}
+
+				for(int k=0;k<16;k++){
+					if(readMore){
+						if(buffer[k] == '#'){
+							readMore = false;
+							products[products_numb].productDetails[16+k] = '\0';
+						}
+						else{
+							products[products_numb].productDetails[16+k] = buffer[k];
+						}
+
 					}
 
 				}
 
 			}
 
-		}
-
-		// ---------------------- READ CAPACITY -------------------------------------
-		if(rfid_card == MIFARE){
-			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)THIRD_SECTOR_TRAILER, &key, &productUid); //line 834
+			// ---------------------- READ CAPACITY -------------------------------------
+			if(rfid_card == MIFARE){
+				status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)THIRD_SECTOR_TRAILER, &key, &productUid); //line 834
+				if (status != STATUS_OK) {
+					return false;
+				}
+			}
+			readMore = true;
+			status = RC522_MIFARE_Read(PRODUCT_CAPACITY_BLOCK, buffer, &len);
 			if (status != STATUS_OK) {
 				return false;
 			}
-		}
-		readMore = true;
-		status = RC522_MIFARE_Read(PRODUCT_CAPACITY_BLOCK, buffer, &len);
-		if (status != STATUS_OK) {
-			return false;
-		}
 
 
-		for(int k=0;k<16;k++){
-			if(readMore){
-				if(buffer[k] == '#'){
-					readMore = false;
-					products[products_numb].productCapacity[k] = '\0';
-				}
+			for(int k=0;k<16;k++){
+				if(readMore){
+					if(buffer[k] == '#'){
+						readMore = false;
+						products[products_numb].productCapacity[k] = '\0';
+					}
 
-				else{
-					products[products_numb].productCapacity[k] = buffer[k];
+					else{
+						products[products_numb].productCapacity[k] = buffer[k];
+					}
 				}
 			}
-		}
 
 
-		// ---------------------- READ EXPIRATION DATE -------------------------------------
-		if(rfid_card == MIFARE){
-			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FOURTH_SECTOR_TRAILER, &key, &productUid); //line 834
+			// ---------------------- READ EXPIRATION DATE -------------------------------------
+			if(rfid_card == MIFARE){
+				status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FOURTH_SECTOR_TRAILER, &key, &productUid); //line 834
+				if (status != STATUS_OK) {
+					return false;
+				}
+			}
+			readMore = true;
+			status = RC522_MIFARE_Read(PRODUCT_EXPIRATION_DATE_BLOCK, buffer, &len);
 			if (status != STATUS_OK) {
 				return false;
 			}
-		}
-		readMore = true;
-		status = RC522_MIFARE_Read(PRODUCT_EXPIRATION_DATE_BLOCK, buffer, &len);
-		if (status != STATUS_OK) {
-			return false;
-		}
 
 
-		for(int k=0;k<16;k++){
-			if(readMore){
-				if(buffer[k] == '#'){
-					readMore = false;
-					products[products_numb].expirationDate[k] = '\0';
-				}
+			for(int k=0;k<16;k++){
+				if(readMore){
+					if(buffer[k] == '#'){
+						readMore = false;
+						products[products_numb].expirationDate[k] = '\0';
+					}
 
-				else{
-					products[products_numb].expirationDate[k] = buffer[k];
+					else{
+						products[products_numb].expirationDate[k] = buffer[k];
+					}
 				}
 			}
-		}
 
-		// ---------------------- READ CATEGORY DATE -------------------------------------
-		if(rfid_card == MIFARE){
-			status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FIFTH_SECTOR_TRAILER, &key, &productUid); //line 834
+			// ---------------------- READ CATEGORY DATE -------------------------------------
+			if(rfid_card == MIFARE){
+				status = RC522_Authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)FIFTH_SECTOR_TRAILER, &key, &productUid); //line 834
+				if (status != STATUS_OK) {
+					return false;
+				}
+			}
+			readMore = true;
+			status = RC522_MIFARE_Read(PRODUCT_CATEGORY_BLOCK, buffer, &len);
 			if (status != STATUS_OK) {
 				return false;
 			}
-		}
-		readMore = true;
-		status = RC522_MIFARE_Read(PRODUCT_CATEGORY_BLOCK, buffer, &len);
-		if (status != STATUS_OK) {
-			return false;
-		}
 
 
-		for(int k=0;k<16;k++){
-			if(readMore){
-				if(buffer[k] == '#'){
-					readMore = false;
-					products[products_numb].productCategory[k] = '\0';
-				}
+			for(int k=0;k<16;k++){
+				if(readMore){
+					if(buffer[k] == '#'){
+						readMore = false;
+						products[products_numb].productCategory[k] = '\0';
+					}
 
-				else{
-					products[products_numb].productCategory[k] = buffer[k];
+					else{
+						products[products_numb].productCategory[k] = buffer[k];
+					}
 				}
 			}
+
+			for(int i=0;i<productUid.size;i++){
+				products[products_numb].uidByte[i] = productUid.uidByte[i];
+			}
+
+			//Add UID size
+			products[products_numb].size = productUid.size;
+
+			products_numb++;
+
+			// Buzzer signal for add product
+			addProductSignal();
+		}else{
+			fullProductsListSignal();
 		}
-
-		for(int i=0;i<productUid.size;i++){
-			products[products_numb].uidByte[i] = productUid.uidByte[i];
-		}
-
-		//Add UID size
-		products[products_numb].size = productUid.size;
-
-		products_numb++;
-
-		// Buzzer signal for add product
-		addProductSignal();
-
 	}
 
 	return true;

@@ -16,7 +16,7 @@ char * DATA_Networks[30] = {""};
 char (*shoplist)[SHOPLIST_NAME_SIZE];
 
 
-GUI_Data_ProductList  DATA_ProdList[25] = {{1, "Mleko 1l", "22.01.2021", 0},
+GUI_Data_ProductList  DATA_ProdList[20] = {{1, "Mleko 1l", "22.01.2021", 0},
 		{2, "Pepsi", "11.11.2022", 1},
 		{3, "Fanta", "22.02.2022", 1},
 		{4, "Piwo", "15.01.2021", 2},

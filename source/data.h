@@ -15,7 +15,7 @@
 
 extern char * DATA_Networks[];
 
-extern GUI_Data_ProductList  DATA_ProdList[25];
+extern GUI_Data_ProductList  DATA_ProdList[20];
 
 extern bool DATA_DataChanged;
 extern uint32_t DATA_Date; // ok. 21;00 29.12.2020 xDD

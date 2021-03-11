@@ -32,16 +32,19 @@
 
 #define TIME_SERVER "showcase.api.linx.twenty57.net"
 
-
+// SPIFI ADRESSES
 #define SPIFI_DATA_START_ADDRESS 200704
 #define SPIFI_NUMBER_OF_PRODUCTS_ADDRESS SPIFI_DATA_START_ADDRESS+56001
 #define SPIFI_SHOP_LIST_ADDRESS 266240
 #define SPIFI_NETWORK_DATA_ADDRESS 274432
 
 
+// Network information sizes
+#define SSID_LENGTH 33
+#define PASSWORD_LENGTH 65
 
-#define NETWORK_DATA_LENGTH 98
-#define PRODUCTS_DATA_LENGTH_BYTES 3500
+#define NETWORK_DATA_LENGTH SSID_LENGTH+PASSWORD_LENGTH
+
 
 
 #define RFID_MODULE_SPI          SPI0
@@ -55,10 +58,7 @@ const int TASK_MAIN_STACK_SIZE = 800;
 portSTACK_TYPE *task_main_stack = NULL;
 TaskHandle_t task_main_task_handler;
 
-
-
-#define SSID_LENGTH 33
-#define PASSWORD_LENGTH 65
+// Structure to safe informations about network with which we have already connected
 typedef struct{
 	char WIFI_SSID[33];
 	char WIFI_PASSWORD[65];
@@ -333,15 +333,11 @@ void loadDataFromFlashMemory(){
 	int shopListIndex = 0;
 
 
-
-
-
 	// Read products from flash
 	readproducts = &products[0].size;
-	for (int i = 0; i < PRODUCTS_DATA_LENGTH_BYTES; i++)
+	for (int i = 0; i < MAX_NUMBER_OF_PRODUCTS*ONE_PRODUCT_SIZE; i++)
 	{
 		val = (uint8_t *)(FSL_FEATURE_SPIFI_START_ADDR+SPIFI_DATA_START_ADDRESS + i);
-
 
 		*readproducts = *val;
 		readproducts++;
@@ -379,7 +375,6 @@ void saveProductsInFlash(void){
 
 		EnableIRQ(SPIFI0_IRQn);
 
-
 		// WRITE TO SPIFI
 		uint8_t *productsptr;
 
@@ -387,30 +382,33 @@ void saveProductsInFlash(void){
 		int i=0;
 		int j=0;
 		int k=0;
-		int l=0;
 		productsptr = &products[0].size;
+		int pagesNeeded;
 
-		/* Write enable */
+		//Write informations about products------------------------------------------------
+		if(MAX_NUMBER_OF_PRODUCTS*ONE_PRODUCT_SIZE%256 == 0)
+			pagesNeeded = MAX_NUMBER_OF_PRODUCTS*ONE_PRODUCT_SIZE/256;
+		else
+			pagesNeeded = (MAX_NUMBER_OF_PRODUCTS*ONE_PRODUCT_SIZE/256)+1;
+
+		//Saving in one sector, maximum products is 4096/140 = 29
+
 		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-		/* Set address */
-		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, 0U+SPIFI_DATA_START_ADDRESS+l*4096);
-		/* Erase sector */
+		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, 0U+SPIFI_DATA_START_ADDRESS);
 		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
-		/* Check if finished */
 		check_if_finish();
 
-
-		while (page < 14)
+		while (page < pagesNeeded)
 		{
 			SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-			SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_DATA_START_ADDRESS+l*4096+ page * PAGE_SIZE);
+			SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_DATA_START_ADDRESS+ page * PAGE_SIZE);
 			SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
 			for (i = 0; i < PAGE_SIZE; i += 4)
 			{
-				if(k < PRODUCTS_DATA_LENGTH_BYTES){
+				if(k < MAX_NUMBER_OF_PRODUCTS*ONE_PRODUCT_SIZE){
 					for (j = 0; j < 4; j++)
 					{
-						if(k < PRODUCTS_DATA_LENGTH_BYTES){
+						if(k < MAX_NUMBER_OF_PRODUCTS*ONE_PRODUCT_SIZE){
 							data |= ((uint32_t)(*productsptr)) << (j * 8);
 							productsptr++;
 							k++;
@@ -429,10 +427,9 @@ void saveProductsInFlash(void){
 			check_if_finish();
 		}
 
-		//vTaskDelay(200);
 
 
-
+		// WRITE NUMBER OF PRODUCTS----------------------------------------------------
 		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
 		/* Set address */
 		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NUMBER_OF_PRODUCTS_ADDRESS);
@@ -440,7 +437,7 @@ void saveProductsInFlash(void){
 		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
 		/* Check if finished */
 		check_if_finish();
-		// WRITE NUMBER OF PRODUCTS
+
 		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
 		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NUMBER_OF_PRODUCTS_ADDRESS);
 		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
@@ -532,166 +529,6 @@ void saveShopListInFlash(void){
 		SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
 
 		shopListChanged = false;
-}
-// Function to save products and shopping list to SPIFI
-void saveDataInFlash(){
-
-	/* Reset the SPIFI to switch to command mode */
-	SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
-
-	EnableIRQ(SPIFI0_IRQn);
-
-
-	// WRITE TO SPIFI
-	uint8_t *productsptr;
-	char *shoplistptr;
-	uint32_t data=0, page=0;
-	int i=0;
-	int j=0;
-	int k=0;
-	int l=0;
-	productsptr = &products[0].size;
-
-	/* Write enable */
-	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-	/* Set address */
-	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, 0U+SPIFI_DATA_START_ADDRESS+l*4096);
-	/* Erase sector */
-	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
-	/* Check if finished */
-	check_if_finish();
-
-
-	while (page < 14)
-	{
-		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_DATA_START_ADDRESS+l*4096+ page * PAGE_SIZE);
-		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
-		for (i = 0; i < PAGE_SIZE; i += 4)
-		{
-			if(k < PRODUCTS_DATA_LENGTH_BYTES){
-				for (j = 0; j < 4; j++)
-				{
-					if(k < PRODUCTS_DATA_LENGTH_BYTES){
-						data |= ((uint32_t)(*productsptr)) << (j * 8);
-						productsptr++;
-						k++;
-					}else{
-						data|=((uint32_t)(0)) << (j * 8);
-					}
-				}
-				SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
-				data = 0;
-			}else{
-				SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
-				data = 0;
-			}
-		}
-		page++;
-		check_if_finish();
-	}
-
-	//vTaskDelay(200);
-
-
-
-	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-	/* Set address */
-	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NUMBER_OF_PRODUCTS_ADDRESS);
-	/* Erase sector */
-	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
-	/* Check if finished */
-	check_if_finish();
-	// WRITE NUMBER OF PRODUCTS
-	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NUMBER_OF_PRODUCTS_ADDRESS);
-	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
-
-	for (i = 0; i < PAGE_SIZE; i += 4)
-	{
-		if(i == 0){
-			SPIFI_WriteData(BOARD_FLASH_SPIFI, products_numb);
-
-		}else{
-			for (j = 0; j < 4; j++)
-			{
-				data |= ((uint32_t)(0)) << (j * 8);
-
-			}
-			SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
-		}
-
-	}
-	check_if_finish();
-
-
-
-	// WRITE SHOP LIST
-	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_SHOP_LIST_ADDRESS);
-	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
-	check_if_finish();
-
-
-
-	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
-	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_SHOP_LIST_ADDRESS);
-	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[PROGRAM_PAGE]);
-
-	k=0;
-	data = 0;
-	bool ptr2 = false;
-	bool ptr3 = false;
-	bool ptr4 = false;
-	bool ptr5 = false;
-	shoplistptr = &shoplist[0][0];
-	for (i = 0; i < PAGE_SIZE; i += 4)
-	{
-
-		for (j = 0; j < 4; j++)
-		{
-			if(i+j >=50 && i<100){
-				if(!ptr2){
-					shoplistptr = &shoplist[1][0];
-					ptr2 = true;
-				}
-			}else if(i+j >=100 && i<150){
-				if(!ptr3){
-					shoplistptr = &shoplist[2][0];
-					ptr3 = true;
-				}
-			}else if(i+j >=150 && i<200){
-				if(!ptr4){
-					shoplistptr = &shoplist[3][0];
-					ptr4 = true;
-				}
-			}else if(i+j >=200 && i<250){
-				if(!ptr5){
-					shoplistptr = &shoplist[4][0];
-					ptr5 = true;
-				}
-			}else{
-
-			}
-			if(i < 250){
-				data |= ((uint32_t)(*shoplistptr)) << (j * 8);
-				shoplistptr++;
-			}else{
-				data = 0;
-			}
-		}
-
-		SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
-		data = 0;
-
-	}
-	check_if_finish();
-
-	/* Reset to memory command mode */
-	SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
-	SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
-	flashUpdateAvailable = false;
-	shopListChanged = false;
 }
 
 
