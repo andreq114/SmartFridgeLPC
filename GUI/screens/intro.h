@@ -2,7 +2,7 @@
  * intro.h
  *
  *  Created on: Dec 22, 2020
- *      Author: Owner
+ *      Author: Kamil Wielgosz
  */
 
 #ifndef INTRO_H_

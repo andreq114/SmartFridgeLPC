@@ -1,0 +1,11 @@
+GUI_IntData.c:269:32:calcDate	72	static
+GUI_IntData.c:313:13:addProduct	32	static
+GUI_IntData.c:81:6:INTERNALDATA_INIT	0	static
+GUI_IntData.c:87:6:isShopListFull	0	static
+GUI_IntData.c:104:6:GUI_IntData_GroupData	48	static
+GUI_IntData.c:122:6:GUI_ChangeTermRange	40	static
+GUI_IntData.c:138:9:GUI_IntData_GetGroups	0	static
+GUI_IntData.c:142:6:GUI_IntData_SetProductList	0	static
+GUI_IntData.c:148:9:GUI_IntData_AddProdToShopList	24	static
+GUI_IntData.c:174:9:GUI_IntData_DelProdFromShopList	32	static
+GUI_IntData.c:221:6:GUI_IntData_ExtinctionHandler	0	static

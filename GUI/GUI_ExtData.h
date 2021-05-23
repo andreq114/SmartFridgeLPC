@@ -2,7 +2,7 @@
  * GUI_ExtData.h
  *
  *  Created on: Jan 7, 2021
- *      Author: Owner
+ *      Author: Kamil Wielgosz
  */
 
 #ifndef GUI_EXTDATA_H_
@@ -19,6 +19,7 @@ typedef void( * scanNetFun )();
 typedef bool( * connectNetFun )(const char*, const char*);
 typedef void( * disconnectNetFun )();
 typedef void( * setBrightnessFun )(uint8_t );
+typedef void( * delProductFun )(uint8_t *);
 
 enum {
     DATA_DAIRY,
@@ -35,7 +36,7 @@ enum {
 typedef uint8_t GUI_DATA_CATEGORIES;
 
 typedef struct {
-	uint32_t uid;
+	uint8_t uid[10];
 	char name[49];
 	char date[11];
 	GUI_DATA_CATEGORIES category;

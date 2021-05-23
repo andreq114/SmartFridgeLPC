@@ -1,8 +1,0 @@
-GUI_IntData.c:75:32:calcDate	72	static
-GUI_IntData.c:118:13:addProduct	32	static
-GUI_IntData.c:154:6:GUI_IntData_GroupData	40	static
-GUI_IntData.c:169:6:GUI_ChangeTermRange	32	static
-GUI_IntData.c:185:9:GUI_IntData_GetGroups	0	static
-GUI_IntData.c:189:6:GUI_IntData_SetProductList	0	static
-GUI_IntData.c:196:9:GUI_IntData_AddProdToShopList	16	static
-GUI_IntData.c:213:9:GUI_IntData_DelProdFromShopList	32	static

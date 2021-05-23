@@ -1,4 +1,10 @@
-
+/*
+ * settings.h
+ *
+ *  Created on: Dec 28, 2020
+ *      Author: Kamil Wielgosz
+ */
+ 
 #ifndef GUI_SETTINGS_H_
 #define GUI_SETTINGS_H_
 

@@ -40,20 +40,19 @@ RM := rm -rf
 -include littlevgl/lvgl/src/lv_font/subdir.mk
 -include littlevgl/lvgl/src/lv_draw/subdir.mk
 -include littlevgl/lvgl/src/lv_core/subdir.mk
--include littlevgl/lv_examples/src/lv_demo_widgets/subdir.mk
 -include freertos/freertos_kernel/portable/MemMang/subdir.mk
 -include freertos/freertos_kernel/portable/GCC/ARM_CM4F/subdir.mk
 -include freertos/freertos_kernel/subdir.mk
 -include drivers/subdir.mk
--include device/subdir.mk
 -include component/uart/subdir.mk
 -include component/serial_manager/subdir.mk
 -include component/lists/subdir.mk
+-include component/device/subdir.mk
 -include board/subdir.mk
 -include RC522/subdir.mk
 -include GUI/screens/subdir.mk
 -include GUI/fonts/subdir.mk
--include GUI/config/subdir.mk
+-include GUI/conf_internal/subdir.mk
 -include GUI/Icons/subdir.mk
 -include GUI/subdir.mk
 -include subdir.mk
@@ -76,7 +75,7 @@ all: OM13098_Smart_Fridge.axf
 OM13098_Smart_Fridge.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -L"C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\release\OM13098_Smart_Fridge\libs" -Xlinker -Map="OM13098_Smart_Fridge.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T OM13098_Smart_Fridge_Debug.ld -o "OM13098_Smart_Fridge.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -nostdlib -L"C:\Users\andre\Documents\MCUXpressoIDE_11.3.0_5222\ELO\OM13098_Smart_Fridge\libs" -Xlinker -Map="OM13098_Smart_Fridge.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T OM13098_Smart_Fridge_Debug.ld -o "OM13098_Smart_Fridge.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build

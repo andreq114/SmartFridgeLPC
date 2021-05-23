@@ -94,6 +94,7 @@ static void fade_in_anim_ready(lv_anim_t * a);
 static void lv_event_mark_deleted(lv_obj_t * obj);
 static void lv_obj_del_async_cb(void * obj);
 static void obj_del_core(lv_obj_t * obj);
+static void obj_align_core(lv_obj_t * obj, const lv_obj_t * base, lv_align_t align, bool x_set, bool y_set, lv_coord_t x_ofs, lv_coord_t y_ofs);
 
 /**********************
  *  STATIC VARIABLES
@@ -863,6 +864,17 @@ void lv_obj_set_height_margin(lv_obj_t * obj, lv_coord_t h)
     lv_obj_set_height(obj, h - mtop - mbottom);
 }
 
+void lv_obj_align_x(lv_obj_t * obj, const lv_obj_t * base, lv_align_t align, lv_coord_t x_ofs)
+{
+	LV_ASSERT_OBJ(obj, LV_OBJX_NAME);
+
+	if(base == NULL) base = lv_obj_get_parent(obj);
+
+	LV_ASSERT_OBJ(base, LV_OBJX_NAME);
+
+	obj_align_core(obj, base, align, true, false, x_ofs, 0);
+}
+
 
 /**
  * Align an object to an other object.
@@ -880,19 +892,7 @@ void lv_obj_align(lv_obj_t * obj, const lv_obj_t * base, lv_align_t align, lv_co
 
     LV_ASSERT_OBJ(base, LV_OBJX_NAME);
 
-    lv_point_t new_pos;
-    _lv_area_align(&base->coords, &obj->coords, align, &new_pos);
-
-    /*Bring together the coordination system of base and obj*/
-    lv_obj_t * par        = lv_obj_get_parent(obj);
-    lv_coord_t par_abs_x  = par->coords.x1;
-    lv_coord_t par_abs_y  = par->coords.y1;
-    new_pos.x += x_ofs;
-    new_pos.y += y_ofs;
-    new_pos.x -= par_abs_x;
-    new_pos.y -= par_abs_y;
-
-    lv_obj_set_pos(obj, new_pos.x, new_pos.y);
+    obj_align_core(obj, base, align, true, true, x_ofs, y_ofs);
 
 #if LV_USE_OBJ_REALIGN
     /*Save the last align parameters to use them in `lv_obj_realign`*/
@@ -3565,6 +3565,24 @@ static lv_design_res_t lv_obj_design(lv_obj_t * obj, const lv_area_t * clip_area
     return LV_DESIGN_RES_OK;
 }
 
+static void obj_align_core(lv_obj_t * obj, const lv_obj_t * base, lv_align_t align, bool x_set, bool y_set, lv_coord_t x_ofs, lv_coord_t y_ofs)
+{
+	lv_point_t new_pos;
+	    _lv_area_align(&base->coords, &obj->coords, align, &new_pos);
+
+	    /*Bring together the coordination system of base and obj*/
+	    lv_obj_t * par        = lv_obj_get_parent(obj);
+	    lv_coord_t par_abs_x  = par->coords.x1;
+	    lv_coord_t par_abs_y  = par->coords.y1;
+	    new_pos.x += x_ofs;
+	    new_pos.y += y_ofs;
+	    new_pos.x -= par_abs_x;
+	    new_pos.y -= par_abs_y;
+
+	    if(x_set && y_set) lv_obj_set_pos(obj, new_pos.x, new_pos.y);
+	    else if (x_set) lv_obj_set_x(obj, new_pos.x);
+	    else if (y_set) lv_obj_set_y(obj, new_pos.y);
+}
 /**
  * Signal function of the basic object
  * @param obj pointer to an object

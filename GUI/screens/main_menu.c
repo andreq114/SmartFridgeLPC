@@ -1,11 +1,16 @@
+/*
+ * main_menu.c
+ *
+ *  Created on: Dec 28, 2020
+ *      Author: Kamil Wielgosz
+ */
 
+#include <conf_internal/GUI_IntData.h>
+#include <conf_internal/styles.h>
 #include "main_menu.h"
-#include "fsl_debug_console.h"
-#include "GUI_IntData.h"
 #include "tiles.h"
 #include "intro.h"
 #include "settings.h"
-#include "styles.h"
 #include "shoppinglist.h"
 #include "time.h"
 #include "stdio.h"
@@ -31,9 +36,46 @@ LV_IMG_DECLARE(shopcart_img)
 LV_IMG_DECLARE(settings_white_img)
 LV_IMG_DECLARE(shopcart_white_img)
 
+//
+// Static functions
+//
 static void settings_btn_event_handler(lv_obj_t * obj, lv_event_t event);
-//static void list_btn_event_handler(lv_obj_t * obj, lv_event_t event);
+static void shoplist_btn_event_handler(lv_obj_t * obj, lv_event_t event);
+static void refreshtime_task_handler(lv_task_t * task);
+static void initTopToolbar(void);
 
+//
+// Global functions
+//
+void MAIN_MENU_Init(void){
+
+	screen = lv_obj_create(NULL, NULL);
+	lv_obj_add_style(screen, LV_STATE_DEFAULT, &style_borders);
+	lv_obj_set_style_local_bg_color(screen, 0, LV_STATE_DEFAULT, LV_COLOR_BLACK);
+
+	// load firs GUI_ProdList from server
+	//GUI_IntData_GroupData(data, 14);
+	//
+	initTopToolbar();
+	TILES_Init(screen, title);
+
+	time_task = lv_task_create(refreshtime_task_handler, 500, LV_TASK_PRIO_MID, NULL);
+
+#if SHOW_INTRO == 1
+	INTRO_StartIntro();
+#else
+	MAIN_MENU_Show();
+#endif
+}
+
+void MAIN_MENU_Show(void)
+{
+	lv_scr_load(screen);
+}
+
+//
+// Static functions
+//
 
 static void settings_btn_event_handler(lv_obj_t * obj, lv_event_t event){
 	if(event == LV_EVENT_CLICKED)
@@ -46,14 +88,23 @@ static void shoplist_btn_event_handler(lv_obj_t * obj, lv_event_t event){
 }
 
 
-static void refresh_task_handler(lv_task_t * task){
+static void refreshtime_task_handler(lv_task_t * task){
 	struct tm *time;
+
 	time = localtime(GUI_Date);
-	static char buff[6];
+	char buff[6];
 	if(timeColonShowed){
 		sprintf(buff, "%02d %02d", oldHours, oldMins);
 		timeColonShowed = false;
-	}else{
+		if(GUI_ExtinctionTimeTask < 0)
+		{
+			if(GUI_SetBrightness) GUI_SetBrightness(5);
+		}
+		else
+			GUI_ExtinctionTimeTask--;
+	}
+	else
+	{
 		sprintf(buff, "%02d:%02d", time->tm_hour, time->tm_min);
 		oldMins = time->tm_min;
 		oldHours = time->tm_hour;
@@ -91,30 +142,4 @@ static void initTopToolbar(void){
 	lv_imgbtn_set_src(btn_shop, LV_BTN_STATE_RELEASED , &shopcart_white_img);
 	lv_imgbtn_set_src(btn_shop, LV_BTN_STATE_PRESSED , &shopcart_white_img);
 
-}
-
-
-void MAIN_MENU_Init(void){
-
-	screen = lv_obj_create(NULL, NULL);
-	lv_obj_add_style(screen, LV_STATE_DEFAULT, &style_borders);
-	lv_obj_set_style_local_bg_color(screen, 0, LV_STATE_DEFAULT, LV_COLOR_BLACK);
-
-	// load firs GUI_ProdList from server
-	//GUI_IntData_GroupData(data, 14);
-	//
-	initTopToolbar();
-	TILES_Init(screen, title);
-	time_task = lv_task_create(refresh_task_handler, 500, LV_TASK_PRIO_MID, NULL);
-
-#if SHOW_INTRO ==1
-	INTRO_StartIntro();
-#else
-	MAIN_MENU_Show();
-#endif
-}
-
-void MAIN_MENU_Show(void)
-{
-	lv_scr_load(screen);
 }

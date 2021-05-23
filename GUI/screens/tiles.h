@@ -2,15 +2,14 @@
  * tiles.h
  *
  *  Created on: Dec 17, 2020
- *      Author: Owner
+ *      Author: Kamil Wielgosz
  */
 
 #ifndef TILES_H_
 #define TILES_H_
 
+#include <conf_internal/styles.h>
 #include "lvgl.h"
-#include "styles.h"
-#include "data.h"
 #include "config.h"
 
 

@@ -16,20 +16,20 @@ C_DEPS :=
 SUBDIRS := \
 GUI \
 GUI/Icons \
-GUI/config \
+GUI/conf_internal \
 GUI/fonts \
 GUI/screens \
 RC522 \
 board \
+component/device \
 component/lists \
 component/serial_manager \
 component/uart \
-device \
 drivers \
 freertos/freertos_kernel \
 freertos/freertos_kernel/portable/GCC/ARM_CM4F \
 freertos/freertos_kernel/portable/MemMang \
-littlevgl/lv_examples/src/lv_demo_widgets \
+littlevgl/lvgl/porting \
 littlevgl/lvgl/src/lv_core \
 littlevgl/lvgl/src/lv_draw \
 littlevgl/lvgl/src/lv_font \

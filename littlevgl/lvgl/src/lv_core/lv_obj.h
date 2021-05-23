@@ -453,6 +453,8 @@ void lv_obj_set_width_margin(lv_obj_t * obj, lv_coord_t w);
  */
 void lv_obj_set_height_margin(lv_obj_t * obj, lv_coord_t h);
 
+void lv_obj_align_x(lv_obj_t * obj, const lv_obj_t * base, lv_align_t align, lv_coord_t x_ofs);
+
 /**
  * Align an object to an other object.
  * @param obj pointer to an object to align

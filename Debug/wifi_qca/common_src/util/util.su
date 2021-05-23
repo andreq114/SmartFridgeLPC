@@ -1,5 +1,5 @@
-util.c:31:15:Util_GetEndpoint	0	static
-util.c:45:10:Util_Ieee2freq	0	static
-util.c:65:10:Util_Freq2ieee	0	static
-util.c:77:1:Util_AC2EndpointID	0	static
-util.c:83:9:Util_EndpointID2AC	0	static
+util.c:31:15:Util_GetEndpoint	16	static
+util.c:45:10:Util_Ieee2freq	16	static
+util.c:65:10:Util_Freq2ieee	16	static
+util.c:77:1:Util_AC2EndpointID	24	static
+util.c:83:9:Util_EndpointID2AC	24	static

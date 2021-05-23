@@ -6,7 +6,12 @@
  */
 
 
-// AKTUALNA WERSJA PROJEKTU --------------------------------------------------------
+// Thesis name: Sterownik inteligentnej lodówki z panelem graficznym
+// Authors:
+// Andrzej Przybylo
+// Kamil Wielgosz
+
+// Tested on Release - Optimization O2
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -30,8 +35,6 @@
 #include "fsl_sctimer.h"
 
 
-#define TIME_SERVER "showcase.api.linx.twenty57.net"
-
 // SPIFI ADRESSES
 #define SPIFI_DATA_START_ADDRESS 200704
 #define SPIFI_NUMBER_OF_PRODUCTS_ADDRESS SPIFI_DATA_START_ADDRESS+56001
@@ -46,14 +49,14 @@
 #define NETWORK_DATA_LENGTH SSID_LENGTH+PASSWORD_LENGTH
 
 
-
+// RFID SPI Interface
 #define RFID_MODULE_SPI          SPI0
 
 static volatile bool s_lvgl_initialized = false;
 
 
-const int TASK_MAIN_PRIO       = configMAX_PRIORITIES - 3;
-const int TASK_MAIN_STACK_SIZE = 800;
+
+// --------------------------------------------------- WIFI ---------------------------------------------
 
 portSTACK_TYPE *task_main_stack = NULL;
 TaskHandle_t task_main_task_handler;
@@ -68,23 +71,13 @@ typedef struct{
 
 WIFI_AUTH wifi_data;
 
-
 QCOM_SSID g_ssid;
 QCOM_PASSPHRASE g_passphrase;
 
 WLAN_AUTH_MODE g_auth    = WLAN_AUTH_WPA2_PSK;
 WLAN_CRYPT_TYPE g_cipher = WLAN_CRYPT_AES_CRYPT;
 
-
-extern int numIrqs;
-extern int initTime;
-
-// PWM Event
-uint32_t event;
-
-
-int licznik = 0;
-
+bool manualDisconnect = false;
 
 enum STATE
 {
@@ -94,6 +87,17 @@ enum STATE
 };
 
 int state = STATE_IDLE;
+
+extern int numIrqs;
+extern int initTime;
+
+//-------------------------------------- END WiFi ----------------------------------------------------------------//
+
+
+// PWM Event
+uint32_t event;
+
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -128,10 +132,13 @@ void dimmScreen(uint8_t value){
 
 void check_if_finish();
 void saveNetworkInFlash(void);
+void disconnectWifi(void);
 
 // Function to connect with Wifi network
 bool connectWiFi(const char *ssid, const char *password){
-	apDisconnect();
+	disconnectWifi();
+	bool dhcpGetted = false;
+	int wifiTimer = 0;
 	strcpy(wifi_data.WIFI_SSID,ssid);
 	strcpy(wifi_data.WIFI_PASSWORD,password);
 	wifi_data.SSID_LEN = SSID_LENGTH;
@@ -140,60 +147,71 @@ bool connectWiFi(const char *ssid, const char *password){
 	strcpy(g_ssid.ssid,ssid);
 	strcpy(g_passphrase.passphrase,password);
 
-	bool dhcpGetted = false;
-	int wifiTimer = 0;
 	apConnect(&g_ssid, &g_passphrase, g_auth, g_cipher);
 
-	while(wifiTimer < 5){
-		if(!dhcpGetted){
-			if(isConnected()){
-				if(getDhcp()){
-					PRINTF("Connected, DHCP address getted");
-					networkConnectedSignal();
+	while(wifiTimer < 10){
+			if(!dhcpGetted){
+				if(isConnected()){
+					if(getDhcp()){
+						PRINTF("Connected, DHCP address getted");
+						networkConnectedSignal();
 
-					state = STATE_CONNECTED;
-					dhcpGetted = true;
-					saveNetworkInFlash();
-					return true;
-				}
-				else{
-					PRINTF("Getting DHCP address failed");
+						state = STATE_CONNECTED;
+						dhcpGetted = true;
+						saveNetworkInFlash();
+						GUI_SetActualSSID(wifi_data.WIFI_SSID);
+						manualDisconnect = false;
+						return true;
+					}
+					else{
+						GUI_SetActualSSID("");
+						PRINTF("Getting DHCP address failed");
+					}
 				}
 			}
+			wifiTimer++;
+			vTaskDelay(MSEC_TO_TICK(1000));
 		}
-		wifiTimer++;
-		vTaskDelay(MSEC_TO_TICK(1000));
-	}
+
+#if TEST_MODE == 1
+	PRINTF("POLACZENIE Z SIECIA NIEUDANE.\r\n");
+#endif
 	return false;
 }
 
 // Function to disconnect with Wifi with which we are currently connected
 void disconnectWifi(void){
-
-		networkDisconnectSignal();
 		GUI_SetActualSSID("");
 		apDisconnect();
 		state = STATE_IDLE;
-
+		manualDisconnect = true;
+}
+// Function for display to disconnect Wifi connection
+void manualDisconnectWifi(void){
+	networkDisconnectSignal();
+	disconnectWifi();
 }
 
 
 // Function to save wifi SSID and Password in SPIFI
 void saveNetworkInFlash(void){
-
 	uint32_t data=0, page=0;
 	int i=0;
 	int j=0;
 	int k=0;
 	char *ptr = &wifi_data.WIFI_SSID[0];
 
+#if TEST_MODE == 1
+	PRINTF("ZAPISYWANIE NASTEPUJACEJ SIECI W PAMIECI FLASH:\r\n");
+	PRINTF("NAZWA SIECI: %s\r\n",wifi_data.WIFI_SSID);
+	PRINTF("HASLO SIECI: %s\r\n",wifi_data.WIFI_PASSWORD);
+#endif
+
 
 	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
 	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NETWORK_DATA_ADDRESS);
 	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[ERASE_SECTOR]);
 	check_if_finish();
-
-
 
 	SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
 	SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_NETWORK_DATA_ADDRESS + page * PAGE_SIZE);
@@ -214,11 +232,8 @@ void saveNetworkInFlash(void){
 		SPIFI_WriteData(BOARD_FLASH_SPIFI, data);
 		data = 0;
 	}
-
 	check_if_finish();
 
-
-	/* Reset to memory command mode */
 	SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
 	SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
 }
@@ -227,44 +242,54 @@ void saveNetworkInFlash(void){
 // Function to read Wifi SSID and Password and connect with it
 void autoConnectWifi(void){
 	uint8_t *val;
-	/* Reset to memory command mode */
-	SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
+	char *readproducts;
 
+	SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
 	SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
 
-	char *readproducts;
 	readproducts = &wifi_data.WIFI_SSID[0];
-	for (int i = 0; i < SECTOR_SIZE; i++)	// Odczyta to max. 3 produkty, do odczytania 50 produktow zwiekszyc do 56000
+	for (int i = 0; i < SECTOR_SIZE; i++)
 	{
 		if(i < SSID_LENGTH+PASSWORD_LENGTH){
 			val = (uint8_t *)(FSL_FEATURE_SPIFI_START_ADDR+SPIFI_NETWORK_DATA_ADDRESS + i);
 			*readproducts = *val;
 			readproducts++;
-
 		}
 	}
+#if TEST_MODE == 1
+	PRINTF("\r\n");
+	PRINTF("-- AUTOMATYCZNE LACZENIE Z ZAPAMIETANA SIECIA WIFI --\r\n");
+	PRINTF("SIEC ODCZYTANA Z PAMIECI FLASH\r\n");
+	PRINTF("NAZWA SIECI: %s\r\n",wifi_data.WIFI_SSID);
+	PRINTF("HASLO SIECI: %s\r\n",wifi_data.WIFI_PASSWORD);
+	PRINTF("\r\nPROBA POLACZENIA...\r\n");
+#endif
 
-	if(connectWiFi(wifi_data.WIFI_SSID,wifi_data.WIFI_PASSWORD))
-		GUI_SetActualSSID(wifi_data.WIFI_SSID);
-	else
-		GUI_SetActualSSID("");
+	connectWiFi(wifi_data.WIFI_SSID,wifi_data.WIFI_PASSWORD);
 
 }
 
 // Function to translate products list from smart_fridge file to another for littlevgl use
 void translateList(){
+	int j;
+	int k;
 	if(products_numb >= 25)
 		products_numb = 0;
 
 	for(int i=0;i<products_numb;i++){
+
+		for(int j=0;j<10;j++){
+			DATA_ProdList[i].uid[j] = products[i].uidByte[j];
+		}
+
 		DATA_ProdList[i].category = ((int)products[i].productCategory[0])- '0';
 
 		for(int j=0;j<11;j++){
 			DATA_ProdList[i].date[j] = products[i].expirationDate[j];
 		}
 
-		int j = 0;
-		int k = 0;
+		j = 0;
+		k = 0;
 
 		while(products[i].productName[k] != '\0'){
 			DATA_ProdList[i].name[j] = products[i].productName[k];
@@ -322,16 +347,14 @@ void check_if_finish()
 
 // Function to read products nad shopping list from SPIFI
 void loadDataFromFlashMemory(){
-	uint8_t *val;
-	/* Reset to memory command mode */
-	SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
 
+	SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
 	SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
 
-	uint8_t *readproducts;
+	uint8_t *val;
+	volatile uint8_t *  readproducts;
 	char *shoplistptr;
 	int shopListIndex = 0;
-
 
 	// Read products from flash
 	readproducts = &products[0].size;
@@ -343,40 +366,44 @@ void loadDataFromFlashMemory(){
 		readproducts++;
 	}
 
-
-
-
 	// Read number of products from flash
 	val = (uint8_t *)(FSL_FEATURE_SPIFI_START_ADDR+SPIFI_NUMBER_OF_PRODUCTS_ADDRESS);
 	products_numb = *val;
-
-
-
 
 	// Read shop list from flash
 	shoplistptr = &shoplist[0][0];
 
 	for(int i=0;i<SHOPLIST_NAME_SIZE*SHOPLIST_NAMES_LENGTH;i++){
 		val = (uint8_t *)(FSL_FEATURE_SPIFI_START_ADDR+SPIFI_SHOP_LIST_ADDRESS + i);
-
 		if(i % SHOPLIST_NAME_SIZE == 0){
 			shoplistptr = &shoplist[shopListIndex][0];
 			shopListIndex++;
 		}
 		*shoplistptr = *val;
 		shoplistptr++;
-
 	}
+#if TEST_MODE == 1
+	PRINTF("\r\nWCZYTYWANIE LISTY PRODUKTOW Z PAMIECI ZEWNETRZNEJ FLASH...\r\n");
+	for(int i=0;i<products_numb;i++){
+		PRINTF("PRODUKT NUMER %d\r\nNAZWA PRODUKTU: %s %s %s %s\r\n",i+1,products[i].productName,products[i].productBrand,products[i].productDetails,products[i].productCapacity);
+		PRINTF("NUMER KATEGORI: %s\r\n",products[i].productCategory);
+		PRINTF("DATA WAZNOSCI: %s\r\n\r\n",products[i].expirationDate);
+	}
+	PRINTF("LISTA PRODUKTOW ZAKTUALIZOWANA.\r\n");
+#endif
 }
 
 void saveProductsInFlash(void){
 	/* Reset the SPIFI to switch to command mode */
+#if TEST_MODE == 1
+			PRINTF("ZAPISYWANIE LISTY PRODUKTOW DO PAMIECI FLASH\r\n");
+#endif
 		SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
 
 		EnableIRQ(SPIFI0_IRQn);
 
 		// WRITE TO SPIFI
-		uint8_t *productsptr;
+		volatile uint8_t *productsptr;
 
 		uint32_t data=0, page=0;
 		int i=0;
@@ -462,11 +489,14 @@ void saveProductsInFlash(void){
 		/* Reset to memory command mode */
 		SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
 		SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
-		flashUpdateAvailable = false;
+		//flashUpdateAvailable = false;
 }
 
 void saveShopListInFlash(void){
 	// WRITE SHOP LIST
+#if TEST_MODE == 1
+			PRINTF("ZAPISYWANIE LISTY ZAKUPOW DO PAMIECI FLASH\r\n");
+#endif
 
 		SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
 		SPIFI_SetCommandAddress(BOARD_FLASH_SPIFI, SPIFI_SHOP_LIST_ADDRESS);
@@ -488,7 +518,7 @@ void saveShopListInFlash(void){
 
 
 
-		PRINTF("\r\nPotrzebne strony pamieci: %d\r\n",pagesNeeded);
+		//PRINTF("\r\nPotrzebne strony pamieci: %d\r\n",pagesNeeded);
 		shoplistptr = &shoplist[0][0];
 		while(page < pagesNeeded){
 			SPIFI_SetCommand(BOARD_FLASH_SPIFI, &command[WRITE_ENABLE]);
@@ -501,8 +531,8 @@ void saveShopListInFlash(void){
 				for (j = 0; j < 4; j++)
 				{
 					if((((page*PAGE_SIZE)+i+j)-SHOPLIST_NAME_SIZE)%SHOPLIST_NAME_SIZE == 0){
-						PRINTF("\r\nUSTAWIAM WSKAZNIK NA %d ELEMENT\r\n",shopListIndex);
-						PRINTF("\r\nNUMER BAJTU: %d\r\n",page*PAGE_SIZE+i+j);
+						//PRINTF("\r\nUSTAWIAM WSKAZNIK NA %d ELEMENT\r\n",shopListIndex);
+						//PRINTF("\r\nNUMER BAJTU: %d\r\n",page*PAGE_SIZE+i+j);
 						shoplistptr = &shoplist[shopListIndex][0];
 						shopListIndex++;
 					}
@@ -528,14 +558,24 @@ void saveShopListInFlash(void){
 		SPIFI_ResetCommand(BOARD_FLASH_SPIFI);
 		SPIFI_SetMemoryCommand(BOARD_FLASH_SPIFI, &command[READ]);
 
-		shopListChanged = false;
+		//shopListChanged = false;
 }
 
 
 // Function to scan networks and write it to list from which littlevgl will update
 // it on screen
-static void scanNetworks(){
+static void scanNetworks(void){
 	apScan(DATA_Networks);
+}
+
+void deleteProduct(uint8_t *uid){
+	if(deleteProductFromList(uid)){
+		translateList();
+		DATA_DataChanged = true;
+		removeProductSignal();
+		flashUpdateAvailable = true;
+		thingSpeak_UpdateAvailable = true;
+	}
 }
 
 
@@ -546,52 +586,86 @@ static void scanNetworks(){
 // to wifi send it to ThingSpeak server
 void task_updateData(void *param)
 {
-    int32_t result = 0;
-    (void)result;
+#if TEST_MODE == 1
+	rtc_datetime_t time_date_struct;
+#endif
+	int32_t result = 0;
+	(void)result;
 
-    /* Initialize WIFI shield */
-    result = WIFISHIELD_Init();
-    PRINTF("CREATING WIFI TASK1\r\n");
-    assert(A_OK == result);
+	/* Initialize WIFI shield */
+	result = WIFISHIELD_Init();
+	//PRINTF("CREATING WIFI TASK1\r\n");
+	assert(A_OK == result);
 
-    /* Initialize the WIFI driver (thus starting the driver task) */
-    result = wlan_driver_start();
-    PRINTF("CREATING WIFI TASK2\r\n");
-    assert(A_OK == result);
+	/* Initialize the WIFI driver (thus starting the driver task) */
+	result = wlan_driver_start();
+	//PRINTF("CREATING WIFI TASK2\r\n");
+	assert(A_OK == result);
 
-    // Buzzer signal, it tell us that wifi module starts
-    wifiModuleInitSignal();
+	// Buzzer signal, it tell us that wifi module starts
+	wifiModuleInitSignal();
 
-    // Try to connect with wifi network saved in flash memory
-    autoConnectWifi();
+	// Try to connect with wifi network saved in flash memory
+	autoConnectWifi();
+	scanNetworks();
 
 
 
-    while (1)
-    {
-//    	if(flashUpdateAvailable || shopListChanged){
-//    		thingSpeak_shopListChanged = shopListChanged;
-//    		saveDataInFlash();
-//    	}
+	while (1)
+	{
+#if TEST_MODE == 1
+		RTC_GetDatetime(RTC,&time_date_struct);
 
-    	if(flashUpdateAvailable){
-    		saveProductsInFlash();
-    	}
-    	if(shopListChanged){
-    		thingSpeak_shopListChanged = shopListChanged;
-    		saveShopListInFlash();
-    	}
+		PRINTF("GODZINA: %2d:%2d:%2d\r\n",time_date_struct.hour,time_date_struct.minute,time_date_struct.second);
+#endif
+		if(flashUpdateAvailable){
+			flashUpdateAvailable = false;
+#if TEST_MODE == 1
+			PRINTF("WYKRYTO ZMIANE NA LISCIE PRODUKTOW\r\n");
+#endif
+			saveProductsInFlash();
+		}else{
+#if TEST_MODE == 1
+			PRINTF("BRAK ZMIAN NA LISCIE PRODUKTOW\r\n");
+#endif
+		}
+		if(shopListChanged){
+#if TEST_MODE == 1
+			PRINTF("WYKRYTO ZMIANE NA LISCIE ZAKUPOW\r\n");
+#endif
+			GUI_SetShopListChanged(&shopListChanged);
+			thingSpeak_shopListChanged = shopListChanged;
+			shopListChanged = false;
+			saveShopListInFlash();
+		}else{
+#if TEST_MODE == 1
+			PRINTF("BRAK ZMIAN NA LISCIE ZAKUPOW\r\n");
+#endif
+		}
+		if(isConnected()){
+			if(thingSpeak_UpdateAvailable || thingSpeak_shopListChanged){
+				thingSpeak_UpdateAvailable = false;
+				thingSpeak_shopListChanged = false;
+				SF_sendProductsToThingSpeak(shoplist);
+			}
+		}else{
+#if TEST_MODE == 1
+			PRINTF("BRAK POLACZENIA Z SIECIA\r\n");
+#endif
+			if(!manualDisconnect){
+#if TEST_MODE == 1
+			PRINTF("ROZPOCZYNAM PROBE PRZYWROCENIA SIECI...\r\n");
+#endif
+				GUI_SetActualSSID("");
+				autoConnectWifi();
+			}
 
-    	if(thingSpeak_UpdateAvailable || thingSpeak_shopListChanged){
 
-    		if(isConnected() && state == STATE_CONNECTED){
-    			SF_sendProductsToThingSpeak(shoplist);
-    		}
-    	}
-
-    	vTaskDelay(MSEC_TO_TICK(20000));
-    }
+		}
+		vTaskDelay(MSEC_TO_TICK(20000));
+	}
 }
+
 
 
 // Littlevgl task
@@ -616,9 +690,13 @@ static void task_Display(void *param)
     // WIFI Events
     GUI_SetScanNetworkFun(scanNetworks);
     GUI_SetConnectNetworkFun(connectWiFi);
-    GUI_SetDisconnectNetworkFun(disconnectWifi);
+    GUI_SetDisconnectNetworkFun(manualDisconnectWifi);
     GUI_SetBrightnessFun(dimmScreen);
     shoplist = GUI_GetShopList();
+
+    GUI_SetDelProductFun(deleteProduct);
+
+    //GUI_SetActualSSID(wifi_data.WIFI_SSID);
 
 #if INITIAL_PRODUCTS == 1
     translateList();
@@ -643,9 +721,11 @@ static void task_updateTime(void *param){
 	while(state != STATE_CONNECTED){
 		vTaskDelay(MSEC_TO_TICK(1000));
 	}
-
+#if TEST_MODE == 1
+	PRINTF("\r\nAKTUALIZOWANIE DATY ORAZ GODZINY...\r\n");
+#endif
 	char timeBuff[500];
-	char timeTable[30];
+	char timeTable[20];
 	uint32_t number;
 	rtc_datetime_t time_date_struct;
 	int timeBuffLength;
@@ -653,12 +733,13 @@ static void task_updateTime(void *param){
 	httpGet(TIME_SERVER,"UnixTime/tounix?date=now",timeBuff);
 	timeBuffLength = strlen(timeBuff);
 
-	for(int i=0;i<11;i++)
-		timeTable[i] = timeBuff[timeBuffLength-10+i];
+	for(int i=0;i<10;i++)
+		timeTable[i] = timeBuff[timeBuffLength-11+i];
 
 	number = atoi(timeTable);
 	// Time from this server is 1 hour behind - add one hour
-	number = number + 3600;
+	//number = number + 7200;
+	number = 1620914160 + 7200;
 	RTC_SecondToDateTime(number,&time_date_struct);
 	RTC_EnableTimer(RTC, false);
 
@@ -670,9 +751,13 @@ static void task_updateTime(void *param){
 	DATA_Date = RTC_GetSecondFromRTC(RTC);
 	// We need to tell Littlevgl that we set new time to calculate time to expirate products
 	DATA_DataChanged = true;
+#if TEST_MODE == 1
+	PRINTF("DATA ORAZ GODZINA ZOSTALY ZAKTUALIZOWANE\r\n");
+#endif
 	while(1){
 		DATA_Date = RTC_GetSecondFromRTC(RTC);
 		vTaskDelay(MSEC_TO_TICK(1000));
+
 	}
 
 }
@@ -704,6 +789,7 @@ int main(void)
        BOARD_InitPeripherals();
 
        // Init PWM for screen dimming
+       // Cause of crashing on Debug mode, works without dimming when we disable PWM pin of display
        BOARD_InitPWM();
 
        // Configure RTC
@@ -721,7 +807,7 @@ int main(void)
     		   ;
        }
 
-       stat = xTaskCreate(task_updateData, "Wi-Fi task", TASK_MAIN_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, &task_main_task_handler);
+       stat = xTaskCreate(task_updateData, "Wi-Fi task", 890, NULL, tskIDLE_PRIORITY + 2, &task_main_task_handler);
        assert(pdPASS == stat);
 
        if (pdPASS != stat)

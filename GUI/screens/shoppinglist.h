@@ -2,7 +2,7 @@
  * shoppinglist.h
  *
  *  Created on: Jan 1, 2021
- *      Author: Owner
+ *      Author: Kamil Wielgosz
  */
 
 #ifndef SHOPPINGLIST_H_

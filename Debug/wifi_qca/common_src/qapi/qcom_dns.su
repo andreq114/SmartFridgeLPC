@@ -1,1 +1,2 @@
-qcom_dns.c:119:10:qcom_dns_resolver	72	static
+qcom_dns.c:75:16:wifi_dns_assemble_request	48	static
+qcom_dns.c:119:10:qcom_dns_resolver	96	static

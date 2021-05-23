@@ -1,4 +1,9 @@
-
+/*
+ * main_menu.h
+ *
+ *  Created on: Dec 28, 2020
+ *      Author: Kamil Wielgosz
+ */
 
 #ifndef GUI_MAIN_MENU_H_
 #define GUI_MAIN_MENU_H_

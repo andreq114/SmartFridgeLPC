@@ -1,2 +1,12 @@
-intro.c:17:13:intro_anim	0	static
-intro.c:26:6:INTRO_StartIntro	32	static
+lv_color.h:594:26:lv_color_make	16	static
+lv_color.h:599:26:lv_color_hex	16	static
+lv_anim.h:129:20:lv_anim_set_var	16	static
+lv_anim.h:141:20:lv_anim_set_exec_cb	16	static
+lv_anim.h:151:20:lv_anim_set_time	16	static
+lv_anim.h:172:20:lv_anim_set_values	16	static
+lv_obj_style_dec.h:123:1:lv_style_set_bg_color	16	static
+lv_obj_style_dec.h:164:1:lv_style_set_text_color	16	static
+lv_obj_style_dec.h:167:1:lv_style_set_text_font	24	static
+lv_disp.h:120:20:lv_scr_load	16	static
+intro.c:16:13:intro_anim	16	static
+intro.c:25:6:INTRO_StartIntro	32	static

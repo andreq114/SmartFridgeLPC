@@ -1,7 +1,0 @@
-lv_disp.h:120:20:lv_scr_load	16	static
-main_menu.c:24:13:list_btn_event_handler	16	static
-main_menu.c:58:13:settings_btn_event_handler	16	static
-main_menu.c:64:13:updateProducts	16	static
-main_menu.c:78:13:initTopToolbar	16	static
-main_menu.c:100:6:MAIN_MENU_Init	8	static
-main_menu.c:115:6:MAIN_MENU_Show	8	static

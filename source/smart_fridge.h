@@ -22,7 +22,7 @@
 #include "data.h"
 
 #define INITIAL_PRODUCTS 0  // If we want to have some products on start
-
+#define TEST_MODE 0
 
 
 
@@ -93,7 +93,8 @@
 #define FIFTH_SECTOR_TRAILER 23
 
 
-#define WWW_SERVER "api.thingspeak.com"
+#define TIME_SERVER "showcase.api.linx.twenty57.net"
+#define THINGSPEAK_SERVER "api.thingspeak.com"
 
 #define S1_UPDATE_API "4M4LTMQWRYUS085E"
 #define S1_DELETE_API "XCILHJ0VPN5BY1X7"
@@ -120,7 +121,7 @@ enum TARGET{
 };
 
 
-extern Product products[];
+extern volatile Product products[];
 extern uint32_t products_numb;
 extern bool listChanged;
 extern volatile bool thingSpeak_UpdateAvailable;
@@ -142,6 +143,7 @@ bool SF_detectProduct(void);
 void sortList(void);
 void NTAG215_read_config(void);
 void MIFARE_read_config(void);
+bool deleteProductFromList(uint8_t *uid);
 bool readProductsData(Uid product_uid);
 
 #endif /* SMART_FRIDGE_H_ */

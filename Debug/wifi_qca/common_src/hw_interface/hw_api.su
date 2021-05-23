@@ -1,5 +1,5 @@
 hw_api.c:38:10:HW_ProcessPendingInterrupts	24	static
-hw_api.c:89:6:HW_PowerUpDown	8	static
-hw_api.c:118:6:HW_InterruptHandler	8	static
-hw_api.c:131:6:HW_SetClock	0	static
-hw_api.c:137:10:HW_GetMboxAddress	8	static
+hw_api.c:89:6:HW_PowerUpDown	16	static
+hw_api.c:118:6:HW_InterruptHandler	16	static
+hw_api.c:131:6:HW_SetClock	16	static
+hw_api.c:137:10:HW_GetMboxAddress	32	static

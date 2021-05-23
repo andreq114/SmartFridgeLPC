@@ -1,5 +1,5 @@
-cust_api_stack_txrx.c:44:10:Custom_Api_Send	0	static
-cust_api_stack_txrx.c:49:10:custom_sock_is_pending	0	static
-cust_api_stack_txrx.c:68:10:custom_receive_tcpip	24	static
-cust_api_stack_txrx.c:127:6:Custom_DeliverFrameToNetworkStack	4	static
-cust_api_stack_txrx.c:151:10:custom_send_tcpip	16	static
+cust_api_stack_txrx.c:44:10:Custom_Api_Send	24	static
+cust_api_stack_txrx.c:49:10:custom_sock_is_pending	24	static
+cust_api_stack_txrx.c:68:10:custom_receive_tcpip	40	static
+cust_api_stack_txrx.c:127:6:Custom_DeliverFrameToNetworkStack	24	static
+cust_api_stack_txrx.c:151:10:custom_send_tcpip	40	static

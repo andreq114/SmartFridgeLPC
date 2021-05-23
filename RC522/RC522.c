@@ -431,6 +431,7 @@ enum StatusCode RC522_CalculateCRC(uint8_t *data,uint8_t length,uint8_t *result)
 
 
 bool RC522_ReadCardSerial(){
+	memset(uid.uidByte,'\0',10);
 	enum StatusCode result = RC522_PICC_Select(&uid,0);
 
 	return (result == STATUS_OK);

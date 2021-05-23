@@ -1,3 +1,6 @@
+startup_lpc54628.c:324:6:data_init	4	static
+startup_lpc54628.c:333:6:bss_init	0	static
+startup_lpc54628.c:358:6:ResetISR	8	static
 startup_lpc54628.c:462:14:NMI_Handler	0	static
 startup_lpc54628.c:466:14:HardFault_Handler	0	static
 startup_lpc54628.c:470:14:MemManage_Handler	0	static
@@ -7,9 +10,6 @@ startup_lpc54628.c:482:14:SVC_Handler	0	static
 startup_lpc54628.c:486:14:DebugMon_Handler	0	static
 startup_lpc54628.c:490:14:PendSV_Handler	0	static
 startup_lpc54628.c:494:14:SysTick_Handler	0	static
-startup_lpc54628.c:324:6:data_init	4	static
-startup_lpc54628.c:333:6:bss_init	0	static
-startup_lpc54628.c:358:6:ResetISR	8	static
 startup_lpc54628.c:502:14:IntDefaultHandler	0	static
 startup_lpc54628.c:512:11:WDT_BOD_IRQHandler	8	static
 startup_lpc54628.c:516:11:DMA0_IRQHandler	8	static

@@ -17,4 +17,5 @@ void	GUI_SetConnectNetworkFun(connectNetFun fun);
 void	GUI_SetDisconnectNetworkFun(disconnectNetFun fun);
 void	GUI_SetActualSSID(const char* ssid);
 void	GUI_SetBrightnessFun(setBrightnessFun fun);
+void	GUI_SetDelProductFun(delProductFun fun);
 #endif

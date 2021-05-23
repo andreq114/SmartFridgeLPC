@@ -116,7 +116,7 @@ bool getDhcp(void)
 {
     A_STATUS status;
 
-    PRINTF("Getting DHCP address...\r\n");
+    //PRINTF("Getting DHCP address...\r\n");
 
     for (int32_t i = 20; i > 0; i--)
     {
@@ -281,9 +281,9 @@ void apScan(char * DATA_Networks[])
     int16_t scanNumResults = 0;
     status                 = qcom_get_scan(devId, &scanResult, &scanNumResults);
     isQcomError(status, "qcom_get_scan");
-    PRINTF("qcom_get_scan numResults=%d\r\n", scanNumResults);
+    //PRINTF("qcom_get_scan numResults=%d\r\n", scanNumResults);
 
-    PRINTF(" i Ch RSSI  MAC                SSID\r\n");
+    //PRINTF(" i Ch RSSI  MAC                SSID\r\n");
     for (int i = 0; i < scanNumResults; i++)
     {
         QCOM_BSS_SCAN_INFO *scr = &scanResult[i];
@@ -293,31 +293,33 @@ void apScan(char * DATA_Networks[])
         DATA_Networks[i] = (char*)scr->ssid;
         if(i == scanNumResults-1)
         	DATA_Networks[i+1] = "";
-        PRINTF("%2d %2d %4d  %02x:%02x:%02x:%02x:%02x:%02x  %s\r\n", i, scr->channel, scr->rssi, scr->bssid[0],
-               scr->bssid[1], scr->bssid[2], scr->bssid[3], scr->bssid[4], scr->bssid[5], scr->ssid);
+
+
+        //PRINTF("%2d %2d %4d  %02x:%02x:%02x:%02x:%02x:%02x  %s\r\n", i, scr->channel, scr->rssi, scr->bssid[0],
+        //       scr->bssid[1], scr->bssid[2], scr->bssid[3], scr->bssid[4], scr->bssid[5], scr->ssid);
 
         if (scr->security_enabled)
         {
             if (scr->rsn_cipher == 0 && scr->wpa_cipher == 0)
             {
-                PRINTF("            WEP\r\n");
+                //PRINTF("            WEP\r\n");
             }
             else
             {
                 char *secStr;
                 secStr = getSecurityStr(scr->rsn_auth, scr->rsn_cipher);
-                PRINTF("            RSN: %s\r\n", secStr);
+                //PRINTF("            RSN: %s\r\n", secStr);
                 secStr = getSecurityStr(scr->wpa_auth, scr->wpa_cipher);
-                PRINTF("            WPA: %s\r\n", secStr);
+               // PRINTF("            WPA: %s\r\n", secStr);
             }
         }
         else
         {
-            PRINTF("            open AP\r\n");
+            //PRINTF("            open AP\r\n");
         }
     }
 
-    PRINTF("--------------------\r\n");
+   // PRINTF("--------------------\r\n");
 }
 
 void apConnect(QCOM_SSID *ssid, QCOM_PASSPHRASE *passphrase, WLAN_AUTH_MODE auth, WLAN_CRYPT_TYPE cipher)
@@ -359,7 +361,7 @@ void apConnect(QCOM_SSID *ssid, QCOM_PASSPHRASE *passphrase, WLAN_AUTH_MODE auth
     status = qcom_set_connect_callback(devId, (void *)onConnect);
     isQcomError(status, "qcom_set_connect_callback");
 
-    apConnectParamsPrint();
+    //apConnectParamsPrint();
 
     status = qcom_commit(devId);
     isQcomError(status, "qcom_commit");
@@ -387,7 +389,7 @@ uint32_t resolveHostname(const char *hostname)
     {
         PRINTF("Looked up %s as %d.%d.%d.%d\r\n", hostname, UINT32_IPADDR_TO_CSV_BYTES(addr));
     }
-    PRINTF("#");
+    //PRINTF("#");
     return addr;
 }
 

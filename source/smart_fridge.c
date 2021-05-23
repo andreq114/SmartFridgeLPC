@@ -9,48 +9,22 @@
 
 
 #if INITIAL_PRODUCTS == 0
-Product products[MAX_NUMBER_OF_PRODUCTS];
+volatile Product products[MAX_NUMBER_OF_PRODUCTS];
 uint32_t products_numb = 0;
 #else
-
-
-Product products[MAX_NUMBER_OF_PRODUCTS]={
-		{4,"Mlec","Milk","Mlekovita","3.2 percent","1l","25.02.2021","00"},
-		{4,"Mlec","Milk","Mlekovita","3.2 percent","1l","26.02.2021","00"},
-		{4,"Mlec","Milk","Mlekovita","3.2 percent","1l","23.02.2021","00"},
-		{4,"Mlec","Milk","Mleczna dolina","3.2 percent","1l","25.02.2021","00"},
-		{4,"Mleg","Cheese","Swiatowid","","500 g","28.02.2021","00"},
-		{4,"Mleh","Eggs","Ale Jaja","From free range","12 pieces","05.03.2021","00"},
-
-		{4,"Mlea","Beer","Warka","6 percent","0.5l","13.08.2021","20"},
-		{4,"Mleb","Beer","Zatecky","5.5 percent","0.5l","13.02.2021","20"},
-
-		{4,"Mlem","Vodka","Sobieski","Pure 40 percent","1l","13.02.2022","20"},
-
-
-
-		{4,"Mlej","Pizza","Feliciana","Frozen","2 x 325 g","13.07.2021","70"},
-
-		{4,"Mlek","Tripe","Szubryt","Beef","485 g","23.05.2021","60"},
-		{4,"Mles","Ham","Krakus","Large slices","120 g","19.04.2021","60"},
-		{4,"Mleu","Sausages","Berlinki","With cheese","250 g","13.07.2021","60"},
-
-		{4,"Mlen","Drink","Pepsi","","330 ml","25.07.2022","10"},
-
-		{4,"Mlep","Mustard","Kamis","Sarepska","210 g","20.04.2021","30"},
-
-
-
-
-
-		{4,"Mlet","Tuna","Marinero","Pieces in vegetable oil","185 g","03.04.2021","50"},
-
-		{4,"Mlew","Orange juice","Riviva","","1l","13.03.2021","10"},
-		{4,"Mkek","Orange juice","Riviva","","1l","13.03.2021","10"}};
-uint32_t products_numb = 18;
+volatile Product products[MAX_NUMBER_OF_PRODUCTS]={
+				{4,"Mlea\0\0\0\0\0\0","Chocolate","Wedel","Strawberry","100 g","05.09.2021","4"},
+				{4,"Mleb\0\0\0\0\0\0","Sausages","Berlinki","Classic","300 g","23.04.2021","6"},
+				{4,"Mlec\0\0\0\0\0\0","Mayonnaise","Kulinarny","","600 g","14.04.2021","3"},
+				{4,"Mled\0\0\0\0\0\0","Margarine","Wyborna","Extra","500 g","23.06.2021","0"},
+};
+uint32_t products_numb = 4;
 #endif
 
 
+#if TEST_MODE == 1
+	Product deletedProduct;
+#endif
 
 
 // Buffers with grouped data for send to ThingSpeak
@@ -60,7 +34,8 @@ char groupedDetails[255];
 char groupedCapacity[255];
 char groupedDates[255];
 char groupedCategorys[100];
-char groupedShopList[255];
+char groupedFirstShopList[255];
+char groupedSecondShopList[255];
 
 enum TARGET rfid_card;
 int PRODUCT_NAME_BLOCK1;			//Block 12 for MIFARE 1K Classic, Pages 8-11 for NTAG215
@@ -94,7 +69,8 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 	memset(groupedCapacity, 0, 255*sizeof(char));
 	memset(groupedDates, 0, 255*sizeof(char));
 	memset(groupedCategorys, 0, 100*sizeof(char));
-	memset(groupedShopList, 0, 255*sizeof(char));
+	memset(groupedFirstShopList, 0, 255*sizeof(char));
+	memset(groupedSecondShopList, 0, 255*sizeof(char));
 	int i = 0;
 	int j = 0;
 	int k = 0;
@@ -183,14 +159,22 @@ void groupProductData(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 	k=0;
 
 	//Add products from shopping list to one list
-	for(int i=0; shoplist[i][0] != '\0' ; i++)
+	for(int i=0; i < SHOPLIST_NAMES_LENGTH ; i++)
 	{
-		for(int j = 0; shoplist[i][j] != '\0'; j++){
-			groupedShopList[k]= shoplist[i][j];
+		if(shoplist[i][0] != '\0'){
+			for(int j = 0; shoplist[i][j] != '\0'; j++){
+				if(k < 255)
+					groupedFirstShopList[k]= shoplist[i][j];
+				if(k >= 255 && k < 510)
+					groupedSecondShopList[k-255]= shoplist[i][j];
+				k++;
+			}
+			if(k < 255)
+				groupedFirstShopList[k] = '$';
+			if(k >= 255 && k < 510)
+				groupedSecondShopList[k-255] = '$';
 			k++;
 		}
-		groupedShopList[k] = '$';
-		k++;
 	}
 	k=0;
 
@@ -204,21 +188,36 @@ void SF_sendProductsToThingSpeak(char (*shoplist)[SHOPLIST_NAME_SIZE]){
 	memset(requestBuffer,0,2000*sizeof(char));
 
 	groupProductData(shoplist);
-
+#if TEST_MODE == 1
+	PRINTF("GRUPOWANIE LISTY PRODUKTOW DO WYSLANIA\r\n");
+	PRINTF("field 1 - NAZWY PRODUKTOW: 			%s\r\n",groupedNames);
+	PRINTF("field 2 - MARKI PRODUKTOW: 			%s\r\n",groupedBrands);
+	PRINTF("field 3 - SZCZEGOLY PRODUKTOW: 			%s\r\n",groupedDetails);
+	PRINTF("field 4 - POJEMNOSCI PRODUKTOW: 		%s\r\n",groupedCapacity);
+	PRINTF("field 5 - DATY WAZNOSCI PRODUKTOW: 		%s\r\n",groupedDates);
+	PRINTF("field 6 - NUMERY KATEGORI PRODUKTOW: 		%s\r\n",groupedCategorys);
+	PRINTF("field 7 - LISTA ZAKUPOW: 			%s\r\n",groupedFirstShopList);
+	PRINTF("field 8 - LISTA ZAKUPOW: 				%s\r\n",groupedSecondShopList);
+	PRINTF("\r\nWYSYLANIE ZADANIA USUNIECIA ZAWARTOSCI KANALU...\r\n");
+#endif
 	sprintf(requestBuffer,"/channels/1242116/feeds.json?api_key=%s",S1_DELETE_API);
-	httpDelete(WWW_SERVER,requestBuffer,receiveBuffer);
-	memset(receiveBuffer, 0, 4000*sizeof(char));
-	memset(requestBuffer,0,2000*sizeof(char));
+	httpDelete(THINGSPEAK_SERVER,requestBuffer,receiveBuffer);
+	memset(receiveBuffer, '\0', 4000*sizeof(char));
+	memset(requestBuffer,'\0',2000*sizeof(char));
 
-	sprintf(requestBuffer,"/update?api_key=%s&field1=%s&field2=%s&field3=%s&field4=%s&field5=%s&field6=%s&field7=%s",S1_UPDATE_API,groupedNames,groupedBrands,groupedDetails,groupedCapacity,groupedDates,groupedCategorys,groupedShopList);
-	httpPost(WWW_SERVER,requestBuffer,receiveBuffer);
+#if TEST_MODE == 1
+	PRINTF("WYSYLANIE ZGRUPOWANYCH LIST DO SERWERA THINGSPEAK...\r\n");
+#endif
+	sprintf(requestBuffer,"/update?api_key=%s&field1=%s&field2=%s&field3=%s&field4=%s&field5=%s&field6=%s&field7=%s&field8=%s",S1_UPDATE_API,groupedNames,groupedBrands,groupedDetails,groupedCapacity,groupedDates,groupedCategorys,groupedFirstShopList,groupedSecondShopList);
+	httpPost(THINGSPEAK_SERVER,requestBuffer,receiveBuffer);
 
+#if TEST_MODE == 1
+	PRINTF("\r\nLISTY ZOSTALY WYSLANE.\r\n");
+#endif
 
-	thingSpeak_UpdateAvailable = false;
-	thingSpeak_shopListChanged = false;
 }
 
-
+// Signal when products list is full
 void fullProductsListSignal(void){
 	GPIO_PinWrite(GPIO,1,22,1);
 	vTaskDelay(MSEC_TO_TICK(1000));
@@ -288,20 +287,60 @@ bool SF_detectProduct(void){
 	if(!RC522_IsNewCardPresent()){
 		return false;
 	}
+#if TEST_MODE == 1
+	PRINTF("\r\n\r\nWYKRYTO ZNACZNIK RFID\r\n");
+#endif
 	if(!RC522_ReadCardSerial())
 		return false;
 	Uid current_product_uid = RC522_getUid();
 
 	if(current_product_uid.size == 4){
 		MIFARE_read_config();
+#if TEST_MODE == 1
+	PRINTF("ROZPOZNANO ETYKIETE MIFARE Classic 1K\r\n");
+#endif
 	}
 	else{
+#if TEST_MODE == 1
+	PRINTF("ROZPOZNANO ETYKIETE NTAG215\r\n");
+#endif
 		NTAG215_read_config();
 	}
 
+#if TEST_MODE == 1
+	int tempProductsNumb = products_numb;
+#endif
 	if(!readProductsData(current_product_uid)){
 		return false;
 	}
+#if TEST_MODE == 1
+	PRINTF("\r\n");
+	if(products_numb == tempProductsNumb)
+		PRINTF("---- BRAK AKCJI ----");
+	else{
+		if(products_numb > tempProductsNumb){
+			PRINTF("---- DODAWANIE PRODUKTU ----\r\n");
+
+			PRINTF("\r\nNAZWA PRODUKTU:            	%s\r\n",products[products_numb-1].productName);
+			PRINTF("MARKA PRODUKTU:            	%s\r\n",products[products_numb-1].productBrand);
+			PRINTF("SZCZEGOLY PRODUKTU:        	%s\r\n",products[products_numb-1].productDetails);
+			PRINTF("MASA/POJEMNOSC PRODUKTU:   	%s\r\n",products[products_numb-1].productCapacity);
+			PRINTF("DATA WAZNOSCI PRODUKTU:    	%s\r\n",products[products_numb-1].expirationDate);
+			PRINTF("NUMER KATEGORII PRODUKTU:	%s\r\n",products[products_numb-1].productCategory);
+			PRINTF("\r\nAKTUALNA LICZBA PRODUKTOW NA LISCIE: 	%d\r\n\r\n",products_numb);
+		}else{
+			PRINTF("---- USUWANIE PRODUKTU ----\r\n");
+
+			PRINTF("\r\nNAZWA PRODUKTU:            	%s\r\n",deletedProduct.productName);
+			PRINTF("MARKA PRODUKTU:            	%s\r\n",deletedProduct.productBrand);
+			PRINTF("SZCZEGOLY PRODUKTU:        	%s\r\n",deletedProduct.productDetails);
+			PRINTF("MASA/POJEMNOSC PRODUKTU:   	%s\r\n",deletedProduct.productCapacity);
+			PRINTF("DATA WAZNOSCI PRODUKTU:    	%s\r\n",deletedProduct.expirationDate);
+			PRINTF("NUMER KATEGORII PRODUKTU:	%s\r\n",deletedProduct.productCategory);
+			PRINTF("\r\nAKTUALNA LICZBA PRODUKTOW NA LISCIE: 	%d\r\n\r\n",products_numb);
+		}
+	}
+#endif
 	RC522_Halt();
 	RC522_StopCrypto1();
 	thingSpeak_UpdateAvailable = true;
@@ -351,6 +390,53 @@ void MIFARE_read_config(void){
 	PRODUCT_CATEGORY_BLOCK = 22;
 }
 
+// Function to delete product from list
+bool deleteProductFromList(uint8_t *uid){
+	int n;
+	for(int i=0;i<=products_numb;i++){
+		n = 0;
+		for(int j=0;j<10;j++){
+
+			if(uid[j] == products[i].uidByte[j]){
+				n++;
+			}
+		}
+		//If all bytes in compared match - this product is on list and we delete it
+		if(n == 10){
+			//deletedProduct = products[i];
+
+			deletePosition = i;
+			for(int k = 0; k<10;k++)
+				products[i].uidByte[k] = '\0';
+
+			products[i].size = 0;
+
+			for(int k=0;k<33;k++)
+				products[i].productName[k] = '\0';
+
+			for(int k=0;k<33;k++)
+				products[i].productBrand[k] = '\0';
+
+			for(int k=0;k<33;k++)
+				products[i].productDetails[k] = '\0';
+
+			for(int k=0;k<17;k++)
+				products[i].productCapacity[k] = '\0';
+
+			for(int k=0;k<11;k++)
+				products[i].expirationDate[k] = '\0';
+
+			products[i].productCategory[0] = '\0';
+
+			sortList();
+			return true;
+
+		}
+
+	}
+	return false;
+}
+
 
 // Read data from card
 bool readProductsData(Uid productUid){
@@ -360,7 +446,7 @@ bool readProductsData(Uid productUid){
 	bool readMore = true;
 	uint8_t len;
 	MIFARE_KEY key;
-	int n;
+	//int n;
 	// NTAG KEY AND ACK
 	uint8_t PSWBuff[] = {0xFF, 0xFF, 0xFF, 0xFF}; // 32 bit password default FFFFFFFF.
 	uint8_t pACK[] = {0, 0}; // 16 bit password ACK returned by the NFCtag.
@@ -370,47 +456,13 @@ bool readProductsData(Uid productUid){
 	}
 	bool isOnList = false;
 	// Check if product is on list, comparing UID
-	for(int i=0;i<=products_numb;i++){
-		n = 0;
-		for(int j=0;j<productUid.size;j++){
-			if(productUid.uidByte[j] == products[i].uidByte[j]){
-				n++;
-			}
-		}
-		//If all bytes in compared match - this product is on list and we delete it
-		if(n == productUid.size){
 
-			deletePosition = i;
-			for(int k = 0; k<products[i].size;k++)
-				products[i].uidByte[k] = 0;
-
-			products[i].size = 0;
-
-			for(int k=0;k<33;k++)
-				products[i].productName[k] = 0;
-
-			for(int k=0;k<33;k++)
-				products[i].productBrand[k] = 0;
-
-			for(int k=0;k<33;k++)
-				products[i].productDetails[k] = 0;
-
-			for(int k=0;k<17;k++)
-				products[i].productCapacity[k] = 0;
-
-			for(int k=0;k<11;k++)
-				products[i].expirationDate[k] = 0;
-
-			products[i].productCategory[0] = 0;
-
-			sortList();
-
-			isOnList = true;
-
-			// Buzzer signal for remove product from list
-			removeProductSignal();
-		}
+	if(deleteProductFromList(productUid.uidByte)){
+		isOnList = true;
+		// Buzzer signal for remove product from list
+		removeProductSignal();
 	}
+
 	// If variable isOnList is still false, product isn't on list - we read data from card an add it
 	if(!isOnList){
 		if(products_numb < MAX_NUMBER_OF_PRODUCTS){
@@ -652,8 +704,11 @@ bool readProductsData(Uid productUid){
 				}
 			}
 
-			for(int i=0;i<productUid.size;i++){
-				products[products_numb].uidByte[i] = productUid.uidByte[i];
+			for(int i=0;i<10;i++){
+				if(i < productUid.size)
+					products[products_numb].uidByte[i] = productUid.uidByte[i];
+				else
+					products[products_numb].uidByte[i] = '\0';
 			}
 
 			//Add UID size

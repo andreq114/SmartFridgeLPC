@@ -2,22 +2,24 @@
  * GUI.c
  *
  *  Created on: Jan 7, 2021
- *      Author: Owner
+ *      Author: Kamil Wielgosz
  */
 
 
+#include <conf_internal/GUI_IntData.h>
+#include <conf_internal/styles.h>
 #include "GUI.h"
 #include "GUI_ExtData.h"
-#include "GUI_IntData.h"
+#include "conf_internal/GUI_IntData.h"
 #include "main_menu.h"
 #include "settings.h"
 #include "shoppinglist.h"
-#include "styles.h"
 #include "tiles.h"
 #include "stddef.h"
 
 void GUI_Init(void)
 {
+	INTERNALDATA_INIT();
 	STYLES_Init();
 	MAIN_MENU_Init();
 	SETTINGS_Init();
@@ -46,7 +48,7 @@ void	GUI_SetShopListChanged(volatile bool * checker)
 	GUI_ShopListChanged = checker;
 }
 /*
- * return: table of strings, '\0' defines the end
+ * return: table of strings, '\0' defines the end if the list is not full
  */
 char	(*GUI_GetShopList())[SHOPLIST_NAME_SIZE]
 {
@@ -76,4 +78,9 @@ void	GUI_SetActualSSID(const char* ssid)
 void	GUI_SetBrightnessFun(setBrightnessFun fun)
 {
 	GUI_SetBrightness = fun;
+}
+
+void	GUI_SetDelProductFun(delProductFun fun)
+{
+	GUI_DeleteProduct = fun;
 }
