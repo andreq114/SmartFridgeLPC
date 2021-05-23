@@ -8,7 +8,7 @@ Part of Andrzej Przybyło was writing control system for smart fridge controller
 
 <h2>Smart Fridge components</h1>
 
-<img src="https://github.com/KamilWielgosz303/SmartFridgeLPC/blob/main/readme/SmartFridge_allComponents.png" width="500" height="300">
+<img src="https://github.com/andreq114/SmartFridgeLPC/blob/main/readme/SmartFridge_allComponents.png" width="500" height="300">
 
 
 Part of Kamil Wielgosz was writing graphical interface for OM13098 built in display using Littlevgl library.
