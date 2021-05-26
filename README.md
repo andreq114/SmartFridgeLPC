@@ -15,14 +15,14 @@ Part of Kamil Wielgosz was writing graphical interface for OM13098 built in disp
 <h1>Screens</h1>
 <h2>Main panel</h1>
 
-<img src="https://github.com/KamilWielgosz303/SmartFridgeLPC/blob/main/readme/image1.png" width="500" height="300">
-<img src="https://github.com/KamilWielgosz303/SmartFridgeLPC/blob/main/readme/image2.png" width="500" height="300">
+<img src="https://github.com/andreq114/SmartFridgeLPC/blob/main/readme/image1.png" width="500" height="300">
+<img src="https://github.com/andreq114/SmartFridgeLPC/blob/main/readme/image2.png" width="500" height="300">
 
 <h2>Details</h1>
-<img src="https://github.com/KamilWielgosz303/SmartFridgeLPC/blob/main/readme/image3.png" width="500" height="300">
+<img src="https://github.com/andreq114/SmartFridgeLPC/blob/main/readme/image3.png" width="500" height="300">
 
 <h2>Shopping list</h1>
-<img src="https://github.com/KamilWielgosz303/SmartFridgeLPC/blob/main/readme/image4.png" width="500" height="300">
+<img src="https://github.com/andreq114/SmartFridgeLPC/blob/main/readme/image4.png" width="500" height="300">
 
 <h2>Settings</h1>
-<img src="https://github.com/KamilWielgosz303/SmartFridgeLPC/blob/main/readme/image5.png" width="500" height="300">
+<img src="https://github.com/andreq114/SmartFridgeLPC/blob/main/readme/image5.png" width="500" height="300">
